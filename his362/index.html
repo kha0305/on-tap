@@ -31,7 +31,24 @@ h1{font-family:"Times New Roman",Times,serif;font-size:1.45rem;margin:.4em 0;col
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0;box-shadow:var(--shadow)}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 .chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:.85rem}
-.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}.subjnav{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 14px}.subjnav a{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:6px 13px;font-size:.83rem;text-decoration:none;transition:border-color .15s,color .15s}.subjnav a:hover{border-color:var(--accent);color:var(--accent)}.subjnav a.home{color:var(--accent);border-color:var(--accent);font-weight:600}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.exh{font-family:"Times New Roman",Times,serif;font-size:1.25rem;margin:0 0 6px;color:var(--accent)}
+.lbl{display:block;font-size:.85rem;color:var(--muted);margin:10px 0 4px}
+#examRoot input[type=number]{width:130px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-size:1rem;background:var(--card);color:var(--ink)}
+.extop{position:sticky;top:0;z-index:6;display:flex;justify-content:space-between;align-items:center;background:var(--bg);padding:10px 0;margin-bottom:4px}
+.extimer{font-size:1.5rem;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+.extimer.low{color:var(--bad)}
+.exgrid{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.exg{width:38px;height:38px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;cursor:pointer;font-weight:700;font-size:.85rem}
+.exg.done{background:var(--accent);color:#fff;border-color:var(--accent)}
+.exg.cur{outline:2px solid var(--gold);outline-offset:1px}
+.exscore{font-size:2.4rem;font-weight:800;color:var(--accent);text-align:center;margin:4px 0}
+.exsub{text-align:center;color:var(--muted);margin:0 0 10px}
+.exhist{margin-top:14px;font-size:.88rem;color:var(--muted)}
+.exhist .erow{padding:7px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between}
+.exhist .erow b{color:var(--accent)}
+.exwrong{font-size:.92rem}
+.subjnav{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 14px}.subjnav a{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:6px 13px;font-size:.83rem;text-decoration:none;transition:border-color .15s,color .15s}.subjnav a:hover{border-color:var(--accent);color:var(--accent)}.subjnav a.home{color:var(--accent);border-color:var(--accent);font-weight:600}
 .q-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
 .q-tag{font-size:.78rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
 .q-num{font-size:.82rem;color:var(--muted)}
@@ -134,11 +151,38 @@ footer.note{margin-top:26px;color:var(--muted);font-size:.85rem;border-top:1px s
   <div class="toolbar">
     <button class="btn ghost" id="shuffleBtn">Xáo trộn</button>
     <button class="btn ghost" id="wrongBtn">Chỉ ôn câu sai (<span id="wrongCount">0</span>)</button>
-    <button class="btn ghost" id="resetBtn">Làm lại</button>
+    <button class="btn ghost" id="resetBtn">Làm lại</button><button class="btn" id="examBtn">Thi thử</button>
     <span class="score" id="scoreLine">Đã làm <b>0</b>/45 &middot; Đúng <b>0</b></span>
   </div>
   <p class="sub">Nhắc nhỏ: đáp án được tra cứu và đối chiếu từ nhiều nguồn trên mạng, dù đã rà soát kỹ vẫn có thể còn sai sót. Khi ôn thi, bạn nên đối chiếu thêm với giáo trình và đáp án của giảng viên.</p>
   <div id="quizList"></div>
+<div id="examRoot" style="display:none">
+  <div class="card" id="exSetup">
+    <h3 class="exh">Thi thử trắc nghiệm</h3>
+    <p class="sub" style="margin:0 0 4px">Mặc định: 30 câu / 30 phút. Kha chỉnh lại tùy ý.</p>
+    <label class="lbl" for="exNum">Số câu hỏi (tối đa <span id="exMax">0</span>)</label>
+    <input type="number" id="exNum" min="1" value="30">
+    <label class="lbl" for="exMin">Thời gian (phút)</label>
+    <input type="number" id="exMin" min="1" value="30">
+    <div class="toolbar">
+      <button class="btn" id="exStart">Bắt đầu thi</button>
+      <button class="btn ghost" id="exCancel">Đóng</button>
+    </div>
+    <div class="exhist" id="exHist"></div>
+  </div>
+  <div id="exRun" style="display:none">
+    <div class="extop"><span class="extimer" id="exTimer">30:00</span><button class="btn" id="exSubmit">Nộp bài</button></div>
+    <div class="exgrid" id="exGrid"></div>
+    <div class="card" id="exQ"></div>
+    <div class="toolbar">
+      <button class="btn ghost" id="exPrev">&larr; Câu trước</button>
+      <button class="btn ghost" id="exNext">Câu tiếp &rarr;</button>
+      <button class="btn ghost" id="exQuit">Thoát</button>
+    </div>
+  </div>
+  <div id="exResult" style="display:none"></div>
+</div>
+
 </section>
 
 <!-- ============ CÂU HỎI NGẮN ============ -->
@@ -1183,6 +1227,84 @@ function renderTimeline(){
 loadProgress();buildChapChips();rebuildOrder();renderQuiz();
 fOrder=FLASH.map((_,i)=>i);renderFlashList();
 renderEssays();renderTimeline();
+</script>
+<script>
+(function(){
+"use strict";
+var EXKEY=(typeof STORE_KEY!=="undefined"?STORE_KEY:"quiz").replace("quiz","exam");
+var $=function(id){return document.getElementById(id);};
+var root=$("examRoot"),quizList=$("quizList");
+var exQs=[],exAns={},exIdx=0,exTimer=null,exLeft=0,exTotal=0;
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function fmt(s){var m=Math.floor(s/60),ss=s%60;return (m<10?"0":"")+m+":"+(ss<10?"0":"")+ss;}
+function openExam(){$("exMax").textContent=QUIZ.length;root.style.display="block";quizList.style.display="none";
+  $("exSetup").style.display="block";$("exRun").style.display="none";$("exResult").style.display="none";renderHist();
+  root.scrollIntoView();}
+function closeExam(){stopTimer();root.style.display="none";quizList.style.display="block";}
+function stopTimer(){if(exTimer){clearInterval(exTimer);exTimer=null;}}
+function renderHist(){var h=[];try{h=JSON.parse(localStorage.getItem(EXKEY)||"[]");}catch(e){}
+  var el=$("exHist");if(!h.length){el.innerHTML="";return;}
+  var s='<div style="font-weight:700;margin-bottom:4px">Lịch sử thi thử</div>';
+  h.slice(-8).reverse().forEach(function(r){var d=new Date(r.d);
+    var ds=(d.getDate()<10?"0":"")+d.getDate()+"/"+(d.getMonth()+1<10?"0":"")+(d.getMonth()+1)+" "+(d.getHours()<10?"0":"")+d.getHours()+":"+(d.getMinutes()<10?"0":"")+d.getMinutes();
+    s+='<div class="erow"><span>'+ds+'</span><span><b>'+r.ok+'</b>/'+r.n+' ('+Math.round(r.ok/r.n*100)+'%)</span></div>';});
+  el.innerHTML=s;}
+function startExam(){
+  var n=parseInt($("exNum").value,10)||30;var mins=parseInt($("exMin").value,10)||30;
+  if(n<1)n=1;if(n>QUIZ.length)n=QUIZ.length;if(mins<1)mins=1;
+  exQs=shuffle(QUIZ.map(function(_,i){return i;})).slice(0,n);
+  exAns={};exIdx=0;exTotal=n;exLeft=mins*60;
+  $("exSetup").style.display="none";$("exResult").style.display="none";$("exRun").style.display="block";
+  renderQ();renderGrid();tick();
+  stopTimer();exTimer=setInterval(tick,1000);
+  window.scrollTo(0,0);}
+function tick(){var t=$("exTimer");t.textContent=fmt(exLeft);
+  t.classList.toggle("low",exLeft<=300);
+  if(exLeft<=0){submitExam();return;}exLeft--;}
+function renderQ(){var qi=exQs[exIdx],q=QUIZ[qi];
+  var s='<div class="q-head"><span class="q-tag">Câu '+(exIdx+1)+"/"+exTotal+(q.c?" · Chương "+q.c:"")+'</span></div>';
+  s+='<p class="q-text">'+q.q+'</p>';
+  q.o.forEach(function(opt,oi){
+    s+='<button class="opt'+(exAns[exIdx]===oi?" correct":"")+'" data-oi="'+oi+'">'+opt+'</button>';});
+  var box=$("exQ");box.innerHTML=s;
+  box.querySelectorAll(".opt").forEach(function(b){b.onclick=function(){exAns[exIdx]=+b.getAttribute("data-oi");renderQ();renderGrid();};});}
+function renderGrid(){var g=$("exGrid");var s="";
+  for(var i=0;i<exTotal;i++){s+='<button class="exg'+(exAns[i]!==undefined?" done":"")+(i===exIdx?" cur":"")+'" data-i="'+i+'">'+(i+1)+'</button>';}
+  g.innerHTML=s;
+  g.querySelectorAll(".exg").forEach(function(b){b.onclick=function(){exIdx=+b.getAttribute("data-i");renderQ();renderGrid();window.scrollTo(0,0);};});}
+function submitExam(){stopTimer();
+  var ok=0,wrong=[];
+  exQs.forEach(function(qi,i){var q=QUIZ[qi];
+    if(exAns[i]===q.a)ok++;else wrong.push({i:i,q:q,pick:exAns[i]});});
+  try{var h=JSON.parse(localStorage.getItem(EXKEY)||"[]");h.push({d:Date.now(),n:exTotal,ok:ok});
+    localStorage.setItem(EXKEY,JSON.stringify(h.slice(-50)));}catch(e){}
+  var pct=Math.round(ok/exTotal*100);
+  var s='<div class="card"><h3 class="exh">Kết quả thi thử</h3>'
+    +'<div class="exscore">'+ok+"/"+exTotal+'</div>'
+    +'<p class="exsub">Đúng '+pct+'% · '+wrong.length+' câu sai</p>'
+    +'<div class="toolbar"><button class="btn" id="exAgain">Thi lại</button><button class="btn ghost" id="exBack">Về ôn tập</button></div></div>';
+  if(wrong.length){s+='<div class="card"><h3 class="exh">Các câu làm sai ('+wrong.length+')</h3>';
+    wrong.forEach(function(w){
+      s+='<div class="exwrong" style="margin-bottom:14px"><p class="q-text" style="font-size:.95rem">Câu '+(w.i+1)+": "+w.q.q+'</p>';
+      s+='<p style="margin:4px 0">Bạn chọn: <b style="color:var(--bad)">'+(w.pick===undefined?"(bỏ trống)":w.q.o[w.pick])+'</b></p>';
+      s+='<p style="margin:4px 0">Đáp án đúng: <b style="color:var(--ok)">'+w.q.o[w.q.a]+'</b></p>';
+      if(w.q.t)s+='<div class="tip show">'+w.q.t+'</div>';
+      s+='</div>';});
+    s+='</div>';}
+  var r=$("exResult");r.innerHTML=s;
+  $("exRun").style.display="none";r.style.display="block";window.scrollTo(0,0);
+  $("exAgain").onclick=function(){r.style.display="none";$("exSetup").style.display="block";renderHist();};
+  $("exBack").onclick=closeExam;}
+$("examBtn").onclick=openExam;
+$("exCancel").onclick=closeExam;
+$("exQuit").onclick=function(){if(confirm("Thoát bài thi? Kết quả sẽ không được lưu."))closeExam();};
+$("exNum").onchange=function(){var n=parseInt($("exNum").value,10)||30;if(n>QUIZ.length){n=QUIZ.length;$("exNum").value=n;}$("exMin").value=n;};
+$("exStart").onclick=startExam;
+$("exSubmit").onclick=function(){if(confirm("Nộp bài thi?"))submitExam();};
+$("exPrev").onclick=function(){if(exIdx>0){exIdx--;renderQ();renderGrid();window.scrollTo(0,0);}};
+$("exNext").onclick=function(){if(exIdx<exTotal-1){exIdx++;renderQ();renderGrid();window.scrollTo(0,0);}};
+})();
+
 </script>
 </body>
 </html>
