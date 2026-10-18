@@ -31,7 +31,7 @@ h1{font-family:"Times New Roman",Times,serif;font-size:1.45rem;margin:.4em 0;col
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0;box-shadow:var(--shadow)}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 .chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:.85rem}
-.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}.subjnav{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 14px}.subjnav a{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:6px 13px;font-size:.83rem;text-decoration:none;transition:border-color .15s,color .15s}.subjnav a:hover{border-color:var(--accent);color:var(--accent)}.subjnav a.home{color:var(--accent);border-color:var(--accent);font-weight:600}
 .q-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
 .q-tag{font-size:.78rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
 .q-num{font-size:.82rem;color:var(--muted)}
@@ -115,7 +115,7 @@ footer.note{margin-top:26px;color:var(--muted);font-size:.85rem;border-top:1px s
   <div>
     <h1>Ôn tập Lịch sử Đảng Cộng sản Việt Nam</h1>
     <p class="sub">45 trắc nghiệm &middot; 30 câu hỏi ngắn &middot; 5 dàn ý tự luận &middot; timeline 31 mốc &middot; ý chính bắt buộc thuộc</p>
-    <p style="margin:0 0 12px"><a href="../" style="color:var(--accent);font-size:.9rem">&larr; Trang chủ</a> &middot; <a href="../pos361/" style="color:var(--accent);font-size:.9rem">Tư tưởng Hồ Chí Minh</a> &middot; <a href="../pos351/" style="color:var(--accent);font-size:.9rem">CNXH khoa học</a> &middot; <a href="../cs420/" style="color:var(--accent);font-size:.9rem">Hệ Phân tán – CS420</a> &middot; <a href="../cs434/" style="color:var(--accent);font-size:.9rem">CS434</a></p>
+    <nav class="subjnav"><a class="home" href="../">&larr; Trang chủ</a><a href="../pos361/">Tư tưởng Hồ Chí Minh</a><a href="../pos351/">CNXH khoa học</a><a href="../cs420/">Hệ Phân tán – CS420</a><a href="../cs434/">CS434</a></nav>
   </div>
   <button class="theme-btn" id="themeBtn" title="Đổi giao diện sáng/tối">Sáng / Tối</button>
 </header>
