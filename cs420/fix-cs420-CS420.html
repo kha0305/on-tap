@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ôn tập Hệ Phân tán – CS420</title>
+<style>
+:root{
+  --bg:#f4f1ea; --card:#ffffff; --ink:#1f2937; --muted:#6b7280;
+  --accent:#b91c1c; --accent-soft:#fee2e2; --gold:#b45309;
+  --ok:#15803d; --ok-soft:#dcfce7; --bad:#b91c1c; --bad-soft:#fee2e2;
+  --line:#e5e0d5; --shadow:0 2px 10px rgba(0,0,0,.07);
+}
+body.dark{
+  --bg:#141210; --card:#1f1c18; --ink:#e9e2d6; --muted:#a8a094;
+  --accent:#f87171; --accent-soft:#3b1d1d; --gold:#fbbf24;
+  --ok:#4ade80; --ok-soft:#14331f; --bad:#f87171; --bad-soft:#3b1d1d;
+  --line:#38322a; --shadow:0 2px 10px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
+.wrap{max-width:860px;margin:0 auto;padding:16px 14px 80px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+h1{font-size:1.45rem;margin:.4em 0;color:var(--accent)}
+.sub{color:var(--muted);font-size:.92rem;margin:0 0 12px}
+.theme-btn{background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer;font-size:.9rem;box-shadow:var(--shadow)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:5}
+.tab{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 16px;cursor:pointer;font-size:.93rem}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0;box-shadow:var(--shadow)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:.85rem}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.q-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.q-tag{font-size:.78rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.q-num{font-size:.82rem;color:var(--muted)}
+.q-text{font-weight:600;margin:0 0 10px;font-size:1.02rem}
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px 12px;margin:7px 0;cursor:pointer;font-size:.95rem;transition:background .15s}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default;opacity:.95}
+.opt.correct{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:600}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.tip{display:none;background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:10px 12px;margin-top:10px;font-size:.9rem}
+.tip.show{display:block}
+.tip b{color:var(--accent)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:999px;padding:9px 18px;cursor:pointer;font-size:.9rem}
+.btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.score{font-size:.92rem;color:var(--muted)}
+.score b{color:var(--accent)}
+/* muc luc cau hoi + nut len dau trang */
+#qNavFab{position:fixed;right:16px;bottom:74px;width:46px;height:46px;border-radius:50%;background:var(--card);color:var(--ink);border:1px solid var(--line);font-size:20px;line-height:1;cursor:pointer;box-shadow:var(--shadow);z-index:60}
+#qNavOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:80;padding:16px}
+#qNavOverlay.open{display:flex}
+#qNavPopup{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);max-width:430px;width:100%;max-height:72vh;display:flex;flex-direction:column}
+.qnav-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line)}
+#qNavClose{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:15px;line-height:1}
+#qNav{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:8px;padding:14px;overflow-y:auto}
+.qn{padding:8px 0;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-weight:700;cursor:pointer;font-size:.85rem}
+.qn.ok{background:#16a34a;border-color:#16a34a;color:#fff}
+.qn.bad{background:#dc2626;border-color:#dc2626;color:#fff}
+.qnl{grid-column:1/-1;display:block;width:100%;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer;font-size:.9rem}
+.card.flash{outline:2px solid var(--accent);outline-offset:2px}
+#toTop{position:fixed;right:16px;bottom:16px;width:46px;height:46px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:22px;line-height:1;cursor:pointer;box-shadow:var(--shadow);display:none;z-index:60}
+#toTop.show{display:block}
+/* essay */
+.acc{border:1px solid var(--line);border-radius:14px;margin:12px 0;background:var(--card);box-shadow:var(--shadow);overflow:hidden}
+.acc-head{padding:15px 16px;cursor:pointer;font-weight:700;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.acc-head:hover{background:var(--accent-soft)}
+.acc-body{display:none;padding:4px 18px 18px}
+.acc.open .acc-body{display:block}
+.acc-body h4{color:var(--accent);margin:14px 0 6px;font-size:.98rem}
+.acc-body ul{margin:6px 0;padding-left:20px}
+.acc-body li{margin:5px 0;font-size:.94rem}
+.kw{background:var(--accent-soft);border-radius:6px;padding:1px 7px;font-size:.88em;color:var(--accent);font-weight:600;white-space:nowrap}
+/* key points */
+.tl{position:relative;margin:14px 0 14px 8px;padding-left:22px;border-left:3px solid var(--accent)}
+.tl-item{margin:0 0 16px;position:relative}
+.tl-item::before{content:"";position:absolute;left:-30px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+.tl-year{font-weight:800;color:var(--accent)}
+.formula{background:var(--card);border:1px dashed var(--accent);border-radius:12px;padding:12px 14px;margin:10px 0;font-size:.95rem}
+.formula b{color:var(--accent)}
+footer.note{margin-top:26px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);padding-top:14px}
+@media(max-width:640px){
+  .wrap{padding:12px 10px 60px}
+  h1{font-size:1.15rem}
+  .sub{font-size:.84rem}
+  header.top{align-items:flex-start}
+  .theme-btn{padding:7px 12px;font-size:.8rem;flex:0 0 auto}
+  .tabs{flex-wrap:nowrap;overflow-x:auto;gap:6px;padding:8px 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;padding:8px 13px;font-size:.84rem}
+  .chips{gap:6px}
+  .chip{padding:6px 11px;font-size:.8rem}
+  .toolbar{gap:6px}
+  .btn{padding:8px 14px;font-size:.84rem}
+  .score{font-size:.84rem;width:100%}
+  .card{padding:13px 12px}
+  .q-text{font-size:.97rem}
+  .q-head{flex-wrap:wrap;gap:4px}
+  .q-num{font-size:.74rem}
+  .opt{padding:9px 10px;font-size:.9rem}
+  .tip{font-size:.86rem}
+  .acc-head{padding:13px 14px;font-size:.94rem}
+  .tl{margin-left:4px}
+}
+.codeblock{background:#1e1e2e;color:#cdd6f4;border-radius:0 0 10px 10px;padding:14px 16px;overflow-x:auto;font-size:.82rem;line-height:1.5;margin:0;font-family:Consolas,Menlo,monospace;white-space:pre}
+.codewrap{margin:12px 0 4px;border-radius:10px;overflow:hidden}
+.codehead{display:flex;justify-content:space-between;align-items:center;background:#313244;color:#cdd6f4;padding:8px 14px;font-size:.8rem;font-family:Consolas,Menlo,monospace}
+.copybtn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 12px;font-size:.75rem;cursor:pointer}
+.copybtn:hover{opacity:.85}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div>
+    <h1>Ôn tập Hệ Phân tán – CS420</h1>
+    <p class="sub">105 trắc nghiệm &middot; 30 câu hỏi ngắn &middot; 5 dàn ý tự luận &middot; 1 file duy nhất, không cần mạng</p>
+    <p style="margin:0 0 12px"><a href="../" style="color:var(--accent);font-size:.9rem">&larr; Trang chủ</a> &middot; <a href="../lsd/" style="color:var(--accent);font-size:.9rem">Lịch sử Đảng</a> &middot; <a href="../pos361/" style="color:var(--accent);font-size:.9rem">Tư tưởng Hồ Chí Minh</a> &middot; <a href="../pos351/" style="color:var(--accent);font-size:.9rem">CNXH khoa học</a> &middot; <a href="../cs434/" style="color:var(--accent);font-size:.9rem">CS434</a></p>
+  </div>
+  <button class="theme-btn" id="themeBtn" title="Đổi giao diện sáng/tối">Sáng / Tối</button>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="quiz">Trắc nghiệm (100)</button>
+  <button class="tab" data-tab="essay">Bài thực hành (9)</button>
+  <button class="tab" data-tab="keys">Ý chính</button>
+</nav>
+
+<!-- ============ QUIZ ============ -->
+<section class="panel active" id="panel-quiz">
+  <div class="chips" id="chapChips"></div>
+  <div class="toolbar">
+    <button class="btn ghost" id="shuffleBtn">Xáo trộn</button>
+    <button class="btn ghost" id="wrongBtn">Chỉ ôn câu sai (<span id="wrongCount">0</span>)</button>
+    <button class="btn ghost" id="resetBtn">Làm lại</button>
+    <span class="score" id="scoreLine">Đã làm <b>0</b>/105 &middot; Đúng <b>0</b></span>
+  </div>
+  <p class="sub">Nhắc nhỏ: đáp án được tra cứu và đối chiếu từ nhiều nguồn trên mạng, dù đã rà soát kỹ vẫn có thể còn sai sót. Khi ôn thi, bạn nên đối chiếu thêm với giáo trình và đáp án của giảng viên.</p>
+  <p class="sub">Lưu ý: bấm "Làm lại" sẽ xóa hết kết quả đã làm và xáo lại thứ tự đáp án A/B/C/D.</p>
+  <div id="quizList"></div>
+</section>
+
+<!-- ============ CÂU HỎI NGẮN ============ -->
+<section class="panel" id="panel-flash">
+  <div class="toolbar">
+    <button class="btn ghost" id="fcShuffle">Xáo trộn thứ tự</button>
+    <span class="score">Đáp án hiện ngay bên dưới mỗi câu hỏi</span>
+  </div>
+  <div id="flashList"></div>
+</section>
+
+<!-- ============ ESSAY ============ -->
+<section class="panel" id="panel-essay">
+  <p class="sub">Chạm vào từng đề để mở dàn ý chi tiết. Mỗi dàn ý đều có sẵn đoạn <b>liên hệ sinh viên</b> dùng được cho nhiều đề.</p>
+  <div id="essayList"></div>
+</section>
+
+<!-- ============ KEY POINTS ============ -->
+<section class="panel" id="panel-keys">
+  <div class="card">
+    <h3 id="keysec-0" style="color:var(--accent);margin-top:0">Ý chính từng chương</h3>
+    <h4>Chương 1 – Tổng quan hệ phân tán</h4>
+    <ul>
+      <li>Hệ phân tán: tập các máy tính <b>độc lập</b> giao tiếp với nhau như một <b>hệ thống thống nhất và toàn vẹn</b> (định nghĩa Tanenbaum).</li>
+      <li>Ví dụ hệ phân tán: hệ thống file BitTorrent, các ứng dụng Web.</li>
+      <li>Middleware: phần mềm phân tán kết nối các ứng dụng khác nhau, cung cấp <b>phân tán minh bạch</b>.</li>
+      <li>Khó khăn khi xây dựng phần mềm phân tán: mất kết nối, thất thoát dữ liệu, tấn công; đảm bảo hiệu quả và tin cậy.</li>
+      <li>Đánh giá ứng dụng phân tán dựa vào: khả năng chịu lỗi, khả năng mở rộng, sự phân tán tài nguyên.</li>
+      <li>Ứng dụng phân tán được quan tâm nhờ: khả năng mở rộng, tính minh bạch vị trí, chịu lỗi và chia sẻ tài nguyên.</li>
+    </ul>
+    <h4>Chương 2 – Kiến trúc hệ phân tán</h4>
+    <ul>
+      <li>Kiến trúc N-tier: tầng logic nghiệp vụ đóng vai trò <b>Client</b> khi tương tác với tầng dữ liệu.</li>
+      <li>Phân loại Flynn dựa vào: <b>số lượng dòng chỉ dẫn và số dòng dữ liệu</b> (SISD, SIMD, MISD, MIMD).</li>
+      <li>Mô hình Von Neumann: bộ nhớ, đơn vị tính toán logic, đơn vị điều khiển, hệ thống vào/ra.</li>
+      <li>Đơn vị dữ liệu ở tầng presentation: <b>Data</b>.</li>
+      <li>Bộ nhớ chia sẻ vật lý: các CPU chia sẻ không gian địa chỉ chung, giao tiếp qua đọc/ghi nhớ.</li>
+      <li>Điện toán đám mây (Cloud): đáp ứng tính sẵn sàng cao, độ tin cậy cao, khả năng mở rộng cao.</li>
+      <li>Tính toán lưới (Grid): xử lý lượng dữ liệu lớn trên môi trường rộng lớn.</li>
+    </ul>
+    <h4>Chương 3 – Giao tiếp bằng Socket</h4>
+    <ul>
+      <li>3 loại Socket: <b>stream, datagram, raw</b>.</li>
+      <li>TCP Socket: hướng kết nối, mô hình Client/Server, gói tin chuyển đi tuần tự.</li>
+      <li>UDP Socket: không kết nối, gói tin <b>không tuân theo quy tắc FIFO</b>, cần kèm địa chỉ người nhận.</li>
+      <li>Socket trong Java khai báo ở gói <b>java.net</b>.</li>
+      <li>Socket hoạt động ở phía trên tầng 3 đến tầng Transport (giao diện giữa ứng dụng và giao vận).</li>
+      <li>Trình tự lập trình Socket ở Client: tạo socket → kết nối Server → trao đổi dữ liệu → đóng kết nối.</li>
+      <li>Trình tự ở Server: tạo socket → đặt tên (bind) → lắng nghe → chấp nhận kết nối → trao đổi dữ liệu → đóng.</li>
+    </ul>
+    <h4>Chương 4 – RPC, RMI và Middleware</h4>
+    <ul>
+      <li>RPC (Birrell & Nelson, <b>1984</b>): cơ chế triệu gọi thủ tục trên các máy tính.</li>
+      <li>Các hệ thống RPC: Sun RPC, DCE RPC, CORBA, DCOM, .NET Remoting, Java RMI, XML-RPC, SOAP.</li>
+      <li>Java RMI: Sun đưa ra, lần đầu trong <b>JDK 1.1</b>; kiến trúc 3 tầng (stub/skeleton, remote reference, transport).</li>
+      <li>Stubs được tạo bởi trình biên dịch riêng <b>rmic</b>; đăng ký tên qua <b>rmiregistry/Naming</b>.</li>
+      <li>Hạn chế của RMI so với gRPC/REST: <b>phụ thuộc chặt vào nền tảng Java</b>, khó giao tiếp đa ngôn ngữ.</li>
+      <li>CORBA = <b>Common Object Request Broker Architecture</b>; IDL = <b>Interface Definition Language</b>.</li>
+      <li>ORB: môi giới yêu cầu đối tượng — quản lý, tìm kiếm, kết buộc và triệu gọi phương thức trên đối tượng.</li>
+      <li>Middleware gồm: Socket, RPC, RMI, DCE, DCOM, CORBA.</li>
+      <li>gRPC dùng <b>Protocol Buffers (.proto)</b> làm IDL; HTTP/2 đa luồng (multiplexing) khử nghẽn đầu dòng.</li>
+      <li>Định dạng phổ biến nhất của RESTful hiện nay: <b>JSON</b>.</li>
+    </ul>
+    <h4>Chương 5 – Đặt tên trong hệ phân tán</h4>
+    <ul>
+      <li><b>Tên</b> của đối tượng <b>không phải</b> là địa chỉ của nó (tách bạch để đảm bảo trong suốt vị trí).</li>
+      <li>Liên kết tên đối tượng với đối tượng gọi là <b>Binding</b>; tra cứu là <b>Lookup</b>.</li>
+      <li>3 kiểu ràng buộc: <b>static binding, early binding, late binding</b>.</li>
+      <li>Early binding: lookup và cache ràng buộc trước khi sử dụng.</li>
+      <li>Phân giải tên (Name Resolution): dịch tên ra dữ liệu về tài nguyên được đặt tên.</li>
+      <li>DNS: hệ thống phân tán đặt tên phân cấp, cơ sở dữ liệu phân tán ánh xạ tên miền → địa chỉ IP.</li>
+      <li>Các dạng tên thực thể: tên thông thường, địa chỉ, định danh.</li>
+    </ul>
+    <h4>Chương 6 – Đồng bộ hóa</h4>
+    <ul>
+      <li>UTC = <b>Coordinated Universal Time</b>.</li>
+      <li>Đồng hồ lý tưởng: dC/dt = 1 chính xác; <b>hiện tượng drift luôn xảy ra</b> với đồng hồ máy tính thực.</li>
+      <li>Đồng hồ logic (Lamport): nắm bắt quan hệ thời gian và <b>quan hệ nhân quả</b> của các sự kiện.</li>
+      <li>Mục đích bầu cử (election): tìm tiến trình làm <b>điều phối viên</b> khi điều phối cũ chết.</li>
+      <li>Thuật toán Bully có độ phức tạp <b>kém hơn</b> Ring (Bully O(n²), Ring O(n)).</li>
+      <li>Loại trừ tương hỗ ở hệ tập trung không áp dụng nguyên xi cho hệ phân tán vì <b>trễ thông điệp</b> và thiếu thông tin trạng thái.</li>
+      <li>Mục đích đồng bộ hóa tiến trình: đồng bộ gửi/nhận, điều phối hoạt động chung, sắp xếp truy cập tài nguyên chia sẻ.</li>
+      <li>Sai lệch trong thuật toán Cristian do: cấu trúc mạng, đồng hồ cục bộ mỗi trạm, thời gian xử lý của Server.</li>
+    </ul>
+    <h4>Chương 7 – Công nghệ phân tán hiện đại</h4>
+    <ul>
+      <li>Trong AMQP (RabbitMQ), <b>Exchange</b> nhận thông điệp từ Producer và điều phối vào các Queue mà không lưu trữ.</li>
+      <li>Sự kiện (Event): phát biểu bất biến về việc đã xảy ra; Thông điệp (Message): thực thể vật lý chứa sự kiện để truyền đi.</li>
+      <li>Đơn vị của băng thông: <b>Bit/second (bps)</b>.</li>
+      <li>Lý do cốt lõi của 'sự giằng co tự nhiên' (van Steen): AI cần xử lý tập trung phức tạp vs hạ tầng phân tán nhỏ gọn, tiết kiệm năng lượng của thiết bị Pervasive/IoT.</li>
+    </ul>
+    <h4>Cụm từ khóa hay bị bẫy</h4>
+    <ul>
+      <li><span class='kw'>UTC</span>: Coordinated Universal Time (không phải Universal Time Clock).</li>
+      <li><span class='kw'>CORBA</span>: Common Object Request Broker Architecture.</li>
+      <li><span class='kw'>IDL</span>: Interface Definition Language.</li>
+      <li><span class='kw'>java.net</span>: gói khai báo Socket trong Java (bẫy: java.io, java.netwok).</li>
+      <li><span class='kw'>rmic</span>: lệnh tạo stub/skeleton cho RMI.</li>
+      <li><span class='kw'>Birrell & Nelson 1984</span>: người đưa ra RPC.</li>
+      <li><span class='kw'>JDK 1.1</span>: RMI lần đầu xuất hiện.</li>
+      <li><span class='kw'>Bully vs Ring</span>: Bully phức tạp hơn (tệ hơn), không phải tốt hơn.</li>
+      <li><span class='kw'>Tên ≠ địa chỉ</span>: tên đối tượng không phải là địa chỉ của nó.</li>
+      <li><span class='kw'>3 loại socket</span>: stream, datagram, raw.</li>
+      <li><span class='kw'>Đồng hồ lý tưởng</span>: dC/dt = 1 chính xác (không phải > 1).</li>
+    </ul>
+  </div>
+</section>
+</div>
+
+<button id="toTop" title="Lên đầu trang" aria-label="Lên đầu trang">↑</button>
+<button id="qNavFab" title="Mục lục câu hỏi" aria-label="Mục lục câu hỏi">☰</button>
+<div id="qNavOverlay"><div id="qNavPopup" role="dialog" aria-label="Mục lục câu hỏi"><div class="qnav-head"><b id="qNavTitle">Mục lục</b><button id="qNavClose" aria-label="Đóng">✕</button></div><div id="qNav"></div></div></div>
+<script>
+"use strict";
+/* ============ DỮ LIỆU TRẮC NGHIỆM: {c: chương, q: câu hỏi, o: 4 đáp án, a: chỉ số đáp án đúng (0-3), t: mẹo nhớ} */
+const QUIZ = [
+  { "n": 1, "c": 3, "q": "Trong lập trình Socket hướng không kết nối (UDP Socket), gói tin gởi đến đến người nhận không tuân theo quy tắc FIFO", "a": 0, "t": "UDP = 'U Đừng Phụ thuộc' thứ tự — gói nào đến trước thì nhận trước, không đảm bảo FIFO.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 2, "c": 5, "q": "Có thể sử dụng địa chỉ của thực thể để thay thay thế cho tên không ?", "a": 0, "t": "Địa chỉ CÓ thể dùng thay tên, nhưng không nên vì mất tính trong suốt vị trí.",
+    "o": [
+    "Có",
+    "Không"
+    ] },
+  { "n": 3, "c": 3, "q": "Trình tự nào là đúng cho lập trình Socket ở Client", "a": 3, "t": "Client KHÔNG cần đặt tên (bind) — chỉ: tạo → kết nối → trao đổi → đóng. Cả 3 phương án đều sai thứ tự.",
+    "o": [
+    "Tạo socket, đặt tên socket,kết nối Server, trao đổi dữ liệu,đóng kết nối",
+    "Tạo socket, kết nối Server, đặt tên socket,trao đổi dữ liệu,đóng kết nối",
+    "Tạo socket, đặt tên socket,trao đổi dữ liệu,kết nối Server,đóng kết nối",
+    "Tất cả a,b,c đều sai"
+    ] },
+  { "n": 4, "c": 6, "q": "UTC viết tắt của cụm từ gì ?", "a": 3, "t": "UTC = <b>Coordinated</b> Universal Time — chữ C đứng đầu, đừng nhầm với Universal Time Clock.",
+    "o": [
+    "Union Time Clock",
+    "Universal Time Clock",
+    "Universal Time Coordinator",
+    "Coordinated Universal Time"
+    ] },
+  { "n": 5, "c": 4, "q": "Kiến trúc RMI dựa trên kiến trúc ……….", "a": 1, "t": "RMI 3 tầng: Stub/Skeleton → Remote Reference → Transport. Nhớ '3 tầng như bánh'.",
+    "o": [
+    "2 tầng",
+    "3 tầng",
+    "4 tầng",
+    "n tầng"
+    ] },
+  { "n": 6, "c": 4, "q": "Cho biết các loại đây các loại nào là Midleware (Chọn nhiều phương án)", "a": 0, "t": "Middleware kinh điển: Socket, RPC, RMI, DCE, DCOM, CORBA — nhớ cụm 'S R R D D C'. <b>Lưu ý:</b> câu này chọn nhiều phương án theo đề.",
+    "o": [
+    "Socket, RPC, RMI, DCE, DCOM,CORBA",
+    "ODBC, JDBC, DB2",
+    "Web Phere Portal, Share Point, Portal",
+    "MS.Active Directory, LDAP,"
+    ] },
+  { "n": 7, "c": 3, "q": "Để có thể kết nối giữa 2 tiến trình, một trong 2 tiến trình phải đợi tiến trình kia kết nối, có thể liên lạc theo mô hình Client/ Server, các gói tin chuyển đi tuần tự v.v... đó là đặc điểm của loại Socket nào ?", "a": 0, "t": "Hướng kết nối + tuần tự + Client/Server = TCP. UDP thì ngược lại.",
+    "o": [
+    "TCP Socket",
+    "UDP Socket",
+    "Raw Socket",
+    "Không có loại nào ở trên."
+    ] },
+  { "n": 8, "c": 1, "q": "Đinh hướng cho hệ phân tán trong tương lai chỉ cần quan tâm đến bảo mật và xác thực. Bởi vì khi kích thước của một hệ thống phân phối phát triển, chẳng hạn như Internet, hệ thống dễ bị tổn thương hơn là để tấn công.", "a": 1, "t": "Câu 'chỉ cần' là bẫy — hệ phân tán còn cần mở rộng, chịu lỗi, hiệu năng...",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 9, "c": 3, "q": "Có bao nhiêu cách trao đổi dữ liệu trong giao tiếp bằng socket", "a": 1, "t": "2 cách: hướng kết nối (TCP) và không kết nối (UDP).",
+    "o": [
+    "1",
+    "2",
+    "3",
+    "4"
+    ] },
+  { "n": 10, "c": 4, "q": "CORBA là một kỹ thuật hỗ trợ cho việc tạo và sử dụng các đối tượng phân tán, nó là một công nghệ tích hợp ........ một ngôn ngữ lập trình", "a": 3, "t": "CORBA độc lập ngôn ngữ — 'không phải' của ngôn ngữ cụ thể nào.",
+    "o": [
+    "với",
+    "hỗ trợ cho",
+    "đi kèm",
+    "không phải"
+    ] },
+  { "n": 11, "c": 3, "q": "Socket trong java được khai báo ở", "a": 2, "t": "Socket trong <b>java.net</b> — bẫy java.io và java.netwok (sai chính tả).",
+    "o": [
+    "java.until",
+    "java.io",
+    "java.net",
+    "java.netwok"
+    ] },
+  { "n": 12, "c": 1, "q": "Theo bạn lý do ra đời hệ thống phân tán là gì ?", "a": 2, "t": "Chọn C — giáo trình đóng khung lý do ra đời hệ phân tán quanh sự phát triển của công nghệ; trong 4 phương án thì C khớp nhất. Câu hỏi mở (\"Theo bạn\") nên vẫn hỏi lại giảng viên cho chắc.",
+    "o": [
+    "Các yêu cầu càng trở khắt khe đối với các hệ thống máy tính trong tương lai",
+    "Hệ tập trung không phù hợp",
+    "Công nghệ thay đổi và nhu cầu của người sử dụng.",
+    "Phải xử lí các bài có kích thước lớn"
+    ] },
+  { "n": 13, "c": 4, "q": "Remote Method Invocation (RMI) do Sun đưa ra năm nào:", "a": 1, "t": "RMI do Sun đưa ra năm 1996 (thời JDK 1.1 beta), chính thức trong JDK 1.1 (1997).",
+    "o": [
+    "1995",
+    "1996",
+    "1998",
+    "2000"
+    ] },
+  { "n": 14, "c": 6, "q": "Sự khác biệt của thuật toán Ricart-Agrawala với thuật toán Central Coodinator là :", "a": 3, "t": "Ricart-Agrawala: 2(n-1) thông điệp, KHÔNG có thắt nút chai (khác với điều phối tập trung).",
+    "o": [
+    "Tốn nhiều lưu lượng trên băng thông, do sử dụng 2(n-1) thông điệp cho mỗi tiến trình yêu cầu và phản hồi.",
+    "Không gây ra hiện tượng “thắt nút chai”",
+    "Khó khắc phục hiện tượng nghẽn băng thông khi có một tiến trình thất bại",
+    "Tất cả đều đúng"
+    ] },
+  { "n": 15, "c": 4, "q": "RMI lần đầu tiên được giới thiệu ở .................", "a": 0, "t": "RMI lần đầu trong <b>JDK 1.1</b> — nhớ 'RMI = 1.1'.",
+    "o": [
+    "JDK1.1",
+    "JDK1.2",
+    "JDK1.3",
+    "JDK1.4"
+    ] },
+  { "n": 16, "c": 1, "q": "Middleware trong hệ thống phân tán là một loại phần mềm phân tán kết nối các loại ứng dụng khác nhau và cung cấp phân tán minh bạch cho các ứng dụng của nó kết nối.", "a": 0, "t": "Định nghĩa middleware chuẩn: kết nối ứng dụng + phân tán minh bạch → Đúng.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 17, "c": 4, "q": "CORBA viết tắt của từ", "a": 1, "t": "CORBA = <b>Common</b> Object Request Broker Architecture — chữ C đầu là Common.",
+    "o": [
+    "Component Object Request Broker Application",
+    "Common Object Request Broker Architecture",
+    "Component Object Request Broker Application",
+    "a,b,c đều sai"
+    ] },
+  { "n": 18, "c": 4, "q": "Hầu hết các ngôn ngữ lập trình (C, C + +, Java v.v...) có khái niệm về các gọi thủ tục từ xa.", "a": 0, "t": "Hầu hết ngôn ngữ hiện đại đều có khái niệm gọi thủ tục từ xa → Đúng.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 19, "c": 1, "q": "Các khó khăn gặp phải khi xây dựng các phần mềm phân tán:", "a": 3, "t": "Tất cả đều là khó khăn: mất kết nối, bảo mật, hiệu quả/tin cậy.",
+    "o": [
+    "Làm thế nào điều hành hệ điều hành phân tán, sử dụng ngôn ngữ lập trình nào?",
+    "Dễ bị mất kết nối, thất thoát dữ liệu, tiềm tảng những nguy hiểm khác nhau.Có thể bị tấn công mọi lúc mọi nơi.",
+    "Làm thế nào để đảm bảo tính hiệu quả, tính tin cậy",
+    "Tất cả đều đúng"
+    ] },
+  { "n": 20, "c": 3, "q": "Có bao nhiêu loại Socket", "a": 1, "t": "3 loại: stream, datagram, raw — nhớ 'SDR'.",
+    "o": [
+    "2",
+    "3",
+    "4",
+    "5"
+    ] },
+  { "n": 21, "c": 1, "q": "Hệ thống phân loại theo phần mềm phân tán phải thỏa mãn các đặt tính gì ?", "a": 0, "t": "Đặc tính phần mềm phân tán: minh bạch, di trú, song song, mở rộng.",
+    "o": [
+    "Tính minh bạch, tính di trú, tính song song, tính mở rộng",
+    "Tính linh hoạt, tính toàn vẹn, tính sao chép, tính tin cậy",
+    "Tính tin cậy, tính minh bạch, tính mở rộng, tính linh hoạt",
+    "Tính mở rộng, tính toàn vẹn, tính sao chép, tính tin cậy"
+    ] },
+  { "n": 22, "c": 5, "q": "Việc liên kết giữa tên đối tượng với đối tượng gọi là .........................", "a": 0, "t": "Binding = liên kết tên-đối tượng; Lookup = tra cứu. Đừng nhầm.",
+    "o": [
+    "Binding",
+    "Lookup",
+    "Bind",
+    "Rebind"
+    ] },
+  { "n": 23, "c": 2, "q": "Trong kiến trúc đa tầng (Kiến trúc N-tier), tầng logic nghiệp vụ (Lớp logic nghiệp vụ) thường đóng vai trò gì khi tương tác với tầng dữ liệu (Lớp truy cập dữ liệu)?", "a": 3, "t": "Tầng trên là Client của tầng dưới — logic nghiệp vụ 'xin' dữ liệu từ tầng dữ liệu.",
+    "o": [
+    "Peer",
+    "Broker",
+    "Server",
+    "Client"
+    ] },
+  { "n": 24, "c": 6, "q": "Ở trường hợp tổng quát độ phức tạp thuật toán ở Bully tốt hơn Ring trong giải thuật bầu cử", "a": 1, "t": "Bully O(n²) TỆ hơn Ring O(n) — câu nói 'tốt hơn' là SAI.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 25, "c": 2, "q": "Các thành phần cơ bản trong mô hình Von Neumann", "a": 3, "t": "Von Neumann đủ 4: bộ nhớ + ALU + điều khiển + vào/ra.",
+    "o": [
+    "Bộ nhớ, CPU, thiết bị vào ra",
+    "Bộ nhớ, đơn vị tính toán logic, thiết bị nhập xuất",
+    "Bộ nhớ, đơn vị điều khiển, thiết bị nhập xuất",
+    "Bộ nhớ, đơn vị tính toán logic, đơn vị điều khiển, hệ thống vào/ra"
+    ] },
+  { "n": 26, "c": 2, "q": "Đơn vị dữ liệu ở tầng presentation là:", "a": 1, "t": "Tầng presentation: đơn vị là <b>Data</b>.",
+    "o": [
+    "Byte",
+    "Data",
+    "Frame",
+    "Packet"
+    ] },
+  { "n": 27, "c": 6, "q": "Đồng hồ logic được đề xuất lần đầu tiên khi nào?", "a": -1, "t": "<b>Lưu ý:</b> Đồng hồ logic (Lamport) thực tế được đề xuất năm 1978, không có trong các phương án. Hãy hỏi lại giảng viên.",
+    "o": [
+    "1990",
+    "Khi mạng máy tính ra đời",
+    "1988",
+    "1992"
+    ] },
+  { "n": 28, "c": 2, "q": "Các đối tượng trong mô hình phân tán được gọi là", "a": -1, "t": "<b>Lưu ý:</b> Các thuật ngữ trong phương án không chuẩn, hãy hỏi lại giảng viên.",
+    "o": [
+    "Đơn vị phân tán",
+    "Node trên mô hình phân tán",
+    "Tài nguyên phân tán",
+    "Tất cả đều đúng"
+    ] },
+  { "n": 29, "c": 6, "q": "Thuật toán loại trừ tương hỗ phải ở hệ thống tập trung không áp dụng cho hệ phân tán vì ở hệ phân tán phải đối phó với sự chậm trễ thông điệp và thiếu hoặc không đoán trước thông tin về trạng thái của hệ thống", "a": 0, "t": "Hệ phân tán có trễ thông điệp và thiếu thông tin trạng thái → Đúng.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 30, "c": 6, "q": "Hạn chế chính của thuật toán Ring trong giải thuật bầu cử làm hệ thống mạng", "a": 0, "t": "Ring cần vòng nguyên vẹn — mạng phân mảnh là hạn chế chính. <b>Lưu ý:</b> đáp án đang được đối chiếu thêm, hãy hỏi lại giảng viên để chắc chắn.",
+    "o": [
+    "phân mãnh mạng",
+    "thắt nút chai",
+    "không đảm bảo quy tắc FIFO",
+    "Tất cả hạn chế trên"
+    ] },
+  { "n": 31, "c": 4, "q": "RPC là gì?", "a": 0, "t": "RPC = triệu gọi (call) thủ tục từ xa — chữ 'triệu gọi' là chìa khóa.",
+    "o": [
+    "cơ chể để triệu gọi trên các máy tính",
+    "cơ chể kết nối 2 máy tính trên mạng",
+    "cơ chể liên lạc giữa các máy tính",
+    "cơ chể trao đổi dữ liệu giữa các máy tính"
+    ] },
+  { "n": 32, "c": 5, "q": "Tên của đối tượng trong hệ phân tán là địa chỉ của đối tượng đó", "a": 1, "t": "Tên KHÁC địa chỉ — đây là nguyên tắc cơ bản của đặt tên.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 33, "c": 5, "q": "Trong quá trình kết buộc giữa tên và đối tượng theo kiểu kết buộc sỡm (Early bingding) thì hệ thống thực hiện lookup để ràng buộc đối tượng và sử dụng bộ nhớ Cache ràng buộc trước khi sử dụng", "a": 0, "t": "Early binding: lookup + cache TRƯỚC khi dùng → Đúng.",
+    "o": [
+    "đúng",
+    "sai"
+    ] },
+  { "n": 34, "c": 5, "q": "Phân giải tên (Name Resolution) là quá trình lặp đi lặp lại một tên liên tục được trình bày ngữ cảnh để đặt tên", "a": 1, "t": "Phân giải tên = dịch tên ra địa chỉ/tài nguyên (định nghĩa trong đề diễn đạt khó hiểu). <b>Lưu ý:</b> Định nghĩa trong câu bị diễn đạt khó hiểu; phân giải tên thực chất là dịch tên thành địa chỉ/tài nguyên.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 35, "c": 2, "q": "Có bao nhiêu mô hình kết nối giữa các máy tính trên mạng ?", "a": 0, "t": "2 mô hình: Client-Server và Peer-to-Peer.",
+    "o": [
+    "2",
+    "3",
+    "4",
+    "5"
+    ] },
+  { "n": 36, "c": 7, "q": "ORB có các chức năng nào sau đây :", "a": 3, "t": "ORB làm tất cả: quản lý, tìm kiếm, kết buộc, triệu gọi → D.",
+    "o": [
+    "Quản lý các đối tượng (tạo, kích hoạt, xóa bỏ các đối tượng)",
+    "Xác định và tìm đối tượng, kết buộc Client,",
+    "Thực hiện các phương thức triệu gọi trên đối tượng.",
+    "Tất cả đúng"
+    ] },
+  { "n": 37, "c": 4, "q": "Cơ chế RPC (Remote Procedure Call) được do Birrell & Nelson đưa ra vào năm", "a": 1, "t": "Birrell & Nelson 1984 — nhớ '84 = RPC'.",
+    "o": [
+    "1980",
+    "1984",
+    "1988",
+    "1990"
+    ] },
+  { "n": 38, "c": 4, "q": "Hệ thống nào sau đây là RPC", "a": 3, "t": "Tất cả đều là hệ RPC: Sun, DCE, CORBA, DCOM, RMI, SOAP...",
+    "o": [
+    "Sun RPC, DCE RPC, CORBA",
+    "Microsoft DCOM, Microsoft.NET Remoting",
+    "Java RMI, XML RPC, SOAP",
+    "Tất cả đều đúng"
+    ] },
+  { "n": 39, "c": 4, "q": "Ngôn ngữ trình biên dịch sẽ tạo ra Stubs Client và Server", "a": 0, "t": "Trình biên dịch IDL sinh stub client/server → Đúng.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 40, "c": 6, "q": "Phát biểu nào là đúng nhất về đồng hồ logic", "a": 0, "t": "Đồng hồ logic = nắm bắt quan hệ thời gian + nhân quả (Lamport).",
+    "o": [
+    "Đồng hồ logic là một cơ chế để nắm bắt mối quan hệ thời gian và quan hệ nhân quả của các sự kiện trong một hệ thống phân phối .",
+    "Đồng hồ logic là một vector cho phép sắp xếp một phần của các sự kiện trong một hệ thống phân tán",
+    "Đồng hồ logic là một bản sao thứ tự, theo thông tin cập nhật, trong hệ thống phân tán.",
+    "Đồng hồ logic là một ma trận đồng hồ chứa thông tin về của những tiến trình khác của hệ thống phân tán."
+    ] },
+  { "n": 41, "c": 4, "q": "IDL là viết tắt của cụm từ", "a": 1, "t": "IDL = <b>Interface Definition</b> Language.",
+    "o": [
+    "International Definition Language",
+    "Interface Definition Language",
+    "Interface Define Language",
+    "Tất cả đều sai"
+    ] },
+  { "n": 42, "c": 6, "q": "Hiện tượng Driff không xãy ra với đồng hồ lý tưởng", "a": 0, "t": "Đồng hồ lý tưởng không drift → Đúng (ngược với câu 75).",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 43, "c": 7, "q": "Sự khác biệt cốt lõi giữa Khái niệm Sự kiện (Event) và Thông điệp (Message) là gì? Sự khác biệt cốt lõi giữa Khái niệm Sự kiện (Event) và Thông điệp (Message) là gì?", "a": 1, "t": "Event = sự việc đã xảy ra (bất biến); Message = 'phong bì' chứa event để gửi đi.",
+    "o": [
+    "Sự kiện là gói dữ liệu vật lý truyền qua card mạng, còn Thông điệp là dữ liệu nằm trong RAM.",
+    "Sự kiện là một phát biểu bất biến mang tính lịch sử về một sự việc đã xảy ra, còn Thông điệp là thực thể vật lý chứa đựng sự kiện đó để truyền đi bất đồng bộ.",
+    "Thông điệp có thể bị thay đổi nội dung tùy ý trong quá trình truyền nhận, còn Sự kiện thì có thể bị xóa bởi Broker ngay sau khi đọc.",
+    "Sự kiện bắt buộc phải dùng giao thức TCP, còn Thông điệp bắt buộc phải dùng giao thức UDP"
+    ] },
+  { "n": 44, "c": 7, "q": "Trong AMQP (RabbitMQ), thực thể nào có vai trò nhận thông điệp từ Producer và điều phối vào các hàng đợi (Queues) mà không lưu trữ thông điệp?", "a": 1, "t": "AMQP: <b>Exchange</b> điều phối vào Queue mà không lưu trữ.",
+    "o": [
+    "Connection",
+    "Exchange",
+    "Channel",
+    "Consumer Group"
+    ] },
+  { "n": 45, "c": 4, "q": "Để thực hiện gọi thủ tục từ xa cần có cơ chế phần cứng.", "a": 1, "t": "RPC không cần phần cứng đặc biệt → Sai.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 46, "c": 7, "q": "Tại sao HTTP/2 giúp gRPC giải quyết hoàn toàn hiện tượng nghẽn đầu dòng (Head-of- Line Blocking) ở tầng ứng dụng của HTTP/1.1?", "a": 1, "t": "HTTP/2 khử nghẽn đầu dòng nhờ <b>đa luồng (multiplexing)</b> trên 1 kết nối TCP.",
+    "o": [
+    "Do HTTP/2 sử dụng giao thức UDP để truyền tải dữ liệu thay cho TCP.",
+    "Nhờ cơ chế Đa luồng (Multiplexing) cho phép chia nhỏ thông điệp thành các khung nhị phân và truyền xen kẽ song song trên một kết nối TCP duy nhất.",
+    "Vì HTTP/2 tăng kích thước bộ đệm của card mạng lên gấp nhiều lần.",
+    "Nhờ thuật toán nén tiêu đề HPACK giúp loại bỏ hoàn toàn các trường dữ liệu trùng lặp."
+    ] },
+  { "n": 47, "c": 3, "q": "Phát biểu sau đây phát biểu nào là không đúng về Socket", "a": 1, "t": "Socket là 'điểm cuối kết nối', KHÔNG phải 'vùng nhớ trung gian' → B sai.",
+    "o": [
+    "Socket là một phương pháp để thiết lập kết nối truyền thông giữa một chương trình yêu cầu dịch vụ( client) và một chương trình cung cấp dịch vụ (server) trên mạng LAN, WAN hay Internet",
+    "Socket là vùng nhớ trung gian giữa hai máy khi kết nối với nhau.",
+    "Mỗi socket có thể được xem như một điểm cuối trong một kết nối.",
+    "Một khi socket đã được thiết lập phù hợp, hai máy tính có thể trao đổi dịch vụ và dữ liệu."
+    ] },
+  { "n": 48, "c": 5, "q": "Cho biết các phát biểu sau đây, phát biểu nào là đúng về DNS (Domain Name System)", "a": 3, "t": "DNS: phân tán + phân cấp + ánh xạ tên-IP → tất cả đúng.",
+    "o": [
+    "DNS là một hệ thống phân tán đặt tên phân cấp cho các máy tính, dịch vụ",
+    "DNS là một cơ sở dữ liệu phân tán",
+    "DNS là hệ thống tên miền phân tán chịu trách nhiệm trách nhiệm gán tên miền và lập bản đồ những tên tới địa chỉ IP bằng cách chỉ định tên các máy chủ cho mỗi tên miền.",
+    "A, B, C đều đúng"
+    ] },
+  { "n": 49, "c": 5, "q": "Thực thể trong hệ phân tán là các loại tài nguyên (host, máy in v.v...), người dùng, các tiến trình, các trang Web, các kết nối mạng v.v...", "a": 0, "t": "Thực thể gồm: tài nguyên, người dùng, tiến trình, trang web, kết nối... → Đúng.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 50, "c": 4, "q": "Stubs tạo ra bởi trình biên dịch riêng biệt nhờ lệnh", "a": 0, "t": "<b>rmic</b> sinh stub/skeleton — nhớ 'rmic = RMI compiler'.",
+    "o": [
+    "rmic",
+    "rmiregistry",
+    "invocation",
+    "Naming"
+    ] },
+  { "n": 51, "c": 4, "q": "Mô hình kiến trúc CORBA gồm :", "a": 0, "t": "Kiến trúc CORBA đầy đủ 5 thành phần → A.",
+    "o": [
+    "CORBA services, CORBA facilities, Object Request Broker, CORBA Domain, Application Objects",
+    "CORBA services, CORBA facilities, Object Request Broker",
+    "Object Request Broker, CORBA Domain, Application Objects",
+    "CORBA facilities, Object Request Broker, CORBA Domain"
+    ] },
+  { "n": 52, "c": 7, "q": "Theo Maarten van Steen, lý do cốt lõi tạo ra \"sự giằng co tự nhiên\" (natural tension) giữa các hệ thống tính toán diện rộng và các thuật toán Trí tuệ Nhân tạo AI là gì?", "a": 1, "t": "'Giằng co tự nhiên': AI cần tập trung mạnh vs thiết bị IoT nhỏ gọn tiết kiệm điện.",
+    "o": [
+    "Các thiết bị Pervasive/IoT không có khả năng truyền nhận dữ liệu qua mạng không dây.",
+    "Nhiều thuật toán AI nâng cao hiện vẫn chưa có giải pháp tính toán phân tán hoàn chỉnh, tạo ra rào cản giữa nhu cầu xử lý tập trung phức tạp của AI với hạ tầng phân tán nhỏ gọn, tiết kiệm năng lượng của thiết bị Pervasive.",
+    "Các thuật toán AI yêu cầu tất cả thiết bị IoT phải sử dụng chung một hệ điều hành duy nhất.",
+    "Thuật toán AI không thể chạy trên các hệ thống có hỗ trợ kiến trúc RESTful."
+    ] },
+  { "n": 53, "c": 4, "q": "Điều nào sau đây là nhược điểm chính của Java RMI khi so sánh với gRPC và RESTful Services?", "a": 1, "t": "Nhược điểm RMI: 'kén' Java, khó nói chuyện đa ngôn ngữ.",
+    "o": [
+    "Không hỗ trợ truyền tham số đối tượng.",
+    "Phụ thuộc chặt chẽ vào nền tảng Java (Java-centric), khó giao tiếp đa ngôn ngữ.",
+    "Tốc độ thực thi chậm hơn RESTful Services.",
+    "Không hỗ trợ cơ chế bẫy lỗi Exception"
+    ] },
+  { "n": 54, "c": 4, "q": "Trong gRPC, ngôn ngữ định nghĩa giao diện (IDL - Interface Definition Language) mặc định được sử dụng là gì?", "a": 1, "t": "gRPC dùng <b>Protocol Buffers (.proto)</b>.",
+    "o": [
+    "OpenAPI (Swagger)",
+    "Protocol Buffers (.proto)",
+    "XML Schema (XSD)",
+    "GraphQL Schema"
+    ] },
+  { "n": 55, "c": 4, "q": "Những loại dịch vụ nào cần một hệ thống RPC?", "a": 3, "t": "RPC cần: đặt tên, ràng buộc, đầu cuối, bảo mật... → tất cả.",
+    "o": [
+    "Hoạt động đặt tên dịch vụ, hoạt động ràng buộc, hoạt động đầu cuối",
+    "Hoạt động bảo mật, trao đôỉ dữ liệu",
+    "Hoạt động quản lý bộ nhớ, viết chương trình truy cập vào RPC",
+    "Tất cả đều đúng"
+    ] },
+  { "n": 56, "c": 6, "q": "Đồng bộ hóa đối với hệ thống PC chủ yếu dựa vào điều chỉnh thời gian ở đồng hồ CMOS", "a": 0, "t": "PC đồng bộ chủ yếu qua đồng hồ CMOS → Đúng.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 57, "c": 3, "q": "Trình tự nào là đúng cho lập trình Socket ở Server", "a": 0, "t": "Server: tạo → đặt tên (bind) → lắng nghe → chấp nhận → trao đổi → đóng.",
+    "o": [
+    "Tạo socket, đặt tên socket, thực hiện lắng nghe, truy cập đối tượng , trao đổi dữ liệu, đóng kết nối",
+    "Tạo socket, đặt tên socket, thực hiện lắng nghe, trao đổi dữ liệu, truy cập đối tượng, đóng kết nối.",
+    "Tạo socket, đặt tên socket, trao đổi dữ liệu,thực hiện lắng nghe, truy cập đối tượng, đóng kết nối",
+    "Tất cả A, B, C đều sai"
+    ] },
+  { "n": 58, "c": 4, "q": "Các thành phần RMI gồm", "a": 1, "t": "RMI gồm: invoke từ xa + tiến trình sở hữu + registry tên (không có IDL compiler như CORBA).",
+    "o": [
+    "phương pháp Invoke trên đối tượng từ xa, tiến trình đó đang sở hữu đối tượng từ xa, trình biên dịch idl",
+    "phương pháp Invoke trên đối tượng từ xa, tiến trình đó đang sở hữu đối tượng từ xa, bộ đăng ky tên máy chủ mà các đối tượng liên quan với tên của chúng",
+    "phương pháp Invoke trên đối tượng từ xa, trình biên dịch idl, tên máy chủ mà các đối tượng liên quan với tên của chúng",
+    "phương pháp Invoke trên đối tượng từ xa, trình biên dịch idl, máy chủ mà các đối tượng liên quan với tên của chúng"
+    ] },
+  { "n": 59, "c": 6, "q": "Trong thuật toán Central Coodinator khi điều phối bị chết, một điều phối viên mới được chọn có thể là (chọn 2 phương án)", "a": 0, "t": "Chọn 2: điều phối mới có thể là tiến trình cạnh tranh (A) hoặc bất kỳ tiến trình tham gia nào (C). <b>Lưu ý:</b> câu này chọn 2 phương án theo đề (đáp án: A, C).",
+    "o": [
+    "Một tiến trình cạnh tranh truy cập",
+    "Chỉ có tiến trình trên hệ thống máy chủ",
+    "Tất cả các tiến trình đang tham gia trên hệ thống",
+    "Tất cả đều đúng"
+    ] },
+  { "n": 60, "c": 4, "q": "Để thực hiện invocations đối tượng từ xa nhờ", "a": 0, "t": "Triệu gọi từ xa thực hiện nhờ <b>rmic</b> sinh stub.",
+    "o": [
+    "rmic",
+    "rmiregistry",
+    "invocation",
+    "Naming"
+    ] },
+  { "n": 61, "c": 1, "q": "Các tiêu chuẩn để đánh giá một ứng dụng phân tán, người ta dựa vào:", "a": 0, "t": "Đánh giá ứng dụng phân tán: chịu lỗi + mở rộng + phân tán tài nguyên.",
+    "o": [
+    "Khả năng chịu lỗi, khả năng mơ rộng, sự phân tán tài nguyên",
+    "Tính mở rộng, tính toàn vẹn, tính sao chép, tính tin cậy của ứng dụng",
+    "Xử lý song song và hiệu năng cao, khả năng chịu lỗi, sự phân tán tài nguyên",
+    "A, B, C đều sai"
+    ] },
+  { "n": 62, "c": 3, "q": "Socket thường hoạt động dựa trên các giao thức nào ?", "a": 0, "t": "Socket dùng <b>TCP, UDP</b> (tầng giao vận).",
+    "o": [
+    "TCP,UDP",
+    "TCP,IP",
+    "TCP.IP, UDP, ICMP",
+    "A, B, C đều sai"
+    ] },
+  { "n": 63, "c": 7, "q": "Định dạng dữ liệu nào phổ biến nhất được sử dụng trong việc trao đổi thông tin của RESTful Services hiện nay", "a": 1, "t": "RESTful phổ biến nhất: <b>JSON</b>.",
+    "o": [
+    "Protocol Buffers",
+    "JSON",
+    "HTML",
+    "Custom Binary"
+    ] },
+  { "n": 64, "c": 7, "q": "Đơn vị của “băng thông là”", "a": 2, "t": "Băng thông đo bằng <b>bit/giây (bps)</b>.",
+    "o": [
+    "Hertz (Hz).",
+    "Volt (V).",
+    "Bit/second (bps).",
+    "Ohm (Ω)."
+    ] },
+  { "n": 65, "c": 4, "q": "Các hoạt động chính trên RPC là :", "a": 0, "t": "Hoạt động chính RPC ở runtime: gửi yêu cầu, lọc bản sao, truyền lại trả lời.",
+    "o": [
+    "gởi thông điệp yêu cầu , lọc bản sao, truyền lại các thông điệp trả lời",
+    "Tạo Stub, Skeleton",
+    "Tạo ORB để liên kết các đối tượng",
+    "a,b,c đều sai"
+    ] },
+  { "n": 66, "c": 3, "q": "Socket thường hoạt động ở tầng nào ở mô hình OSI ?", "a": 0, "t": "Socket nằm giữa ứng dụng và giao vận (trên tầng 3 đến tầng Transport).",
+    "o": [
+    "Ở phía trên tầng 3 đến tầng Transport",
+    "Chỉ hoạt động ở tầng Transport",
+    "Hoạt động từ tầng 3 trở lên",
+    "Chỉ hoạt động ở tầng Network"
+    ] },
+  { "n": 67, "c": 2, "q": "Đặc điểm cấu trúc bộ nhớ chia sẻ vật lý", "a": 0, "t": "Bộ nhớ chia sẻ vật lý: 1 không gian địa chỉ chung cho mọi CPU.",
+    "o": [
+    "Có một bộ nhớ chia sẻ không gian địa chỉ của tất cả các CPU, Giao tiếp giữa các CPU diễn ra thông qua việc chia sẻ bằng cách sử dụng hoạt động nhớ đọc và ghi.",
+    "Sử dụng một bộ nhớ dùng chung kết nối các máy tính với nhau.",
+    "a và b đúng",
+    "a và b sai"
+    ] },
+  { "n": 68, "c": 5, "q": "Mạng Internet được gọi là mô hình đối tượng …………….", "a": 3, "t": "Không có khái niệm chuẩn gọi Internet là các mô hình đối tượng này → D. <b>Lưu ý:</b> đáp án đang được đối chiếu thêm, hãy hỏi lại giảng viên để chắc chắn.",
+    "o": [
+    "tái tạo",
+    "phân mãnh",
+    "di trú",
+    "Tất cả đều sai"
+    ] },
+  { "n": 69, "c": 5, "q": "Các dạng của tên thực thể trong hệ phân tán có thể", "a": 3, "t": "Tên thực thể có thể là: tên thường, địa chỉ, định danh → tất cả.",
+    "o": [
+    "tên thông thường, địa chỉ , định danh",
+    "tên của các hoạt động ràng buộc của đối tượng, tên các dịch vụ mạng.",
+    "Tên file, tên thiết bị, các biến của chương trình",
+    "Tất cả a,b,c đều đúng"
+    ] },
+  { "n": 70, "c": 6, "q": "Hạn chế của thuật toán Bully trong giải thuật bầu cử làm hệ thống mạng hoạt động chậm hơn khi tiến trình nhận biết có định danh thấp nhất bắt đầu cuộc bầu cử", "a": 0, "t": "Bully: tiến trình ID thấp nhất khởi xướng gây tốn kém nhất → Đúng.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 71, "c": 3, "q": "Việc nhiều các gói tin bị đụng độ trên mạng sẽ không ảnh hưởng đến hiệu quả truyền thông của mạng", "a": 1, "t": "Đụng độ gói tin LÀM GIẢM hiệu quả mạng → Sai.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 72, "c": 6, "q": "Mục đích của đồng bộ hóa tiến trình nhằm", "a": 3, "t": "Đồng bộ hóa: gửi/nhận + điều phối chung + sắp xếp truy cập → tất cả.",
+    "o": [
+    "Đồng bộ giữa việc gửi và nhận các thông điệp",
+    "Điều phối các hoạt động chung cho toàn hệ thống",
+    "Sắp xếp thứ tự truy cập đồng thời cho các đối tượng được chia sẻ tài nguyên",
+    "Tất cả đều đúng"
+    ] },
+  { "n": 73, "c": 3, "q": "Hai tiến trình không kết nối trực tiếp, thông điệp gởi di phải kèm địa chỉ người nhận, thông điệp gởi sau có thể đến đích trước ...................... đó là đặc điểm của loại Socket nào ?", "a": 1, "t": "Không kết nối trực tiếp + cần địa chỉ + đến không theo thứ tự = UDP.",
+    "o": [
+    "TCP Socket",
+    "UDP Socket",
+    "Raw Socket",
+    "Không có loại nào ở trên."
+    ] },
+  { "n": 74, "c": 6, "q": "Đồng bộ hóa đối với hệ thống PC chủ sử dụng phương pháp bù tuyến tính bằng cách bổ sung thêm hàm bù tuyến tính vào system call của hệ điều hành", "a": 0, "t": "ĐÚNG — giáo trình thư viện số ĐH Duy Tân (chương Đồng bộ hoá đồng hồ) viết nguyên văn: hệ thống PC dùng phương pháp bù tuyến tính bằng cách bổ sung thêm hàm bù tuyến tính (Linear compensating function) vào system call của HĐH.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 75, "c": 6, "q": "Hiện tượng Driff đối với đồng hồ máy tính luôn luôn xãy ra", "a": 0, "t": "Đồng hồ máy tính thực LUÔN drift → Đúng (ngược với câu 42).",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 76, "c": 1, "q": "Các nhân tố ảnh hưởng đến việc xây dựng và thiết kế ứng dụng phân tán", "a": 3, "t": "Thiết kế ứng dụng phân tán chịu ảnh hưởng: ngôn ngữ, CSDL, công cụ, bảo mật, chịu lỗi → tất cả.",
+    "o": [
+    "Ngôn ngữ lập trình, cơ sở dữ liệu",
+    "Kỹ thuật và công cụ phát triển, mô hình phát triển",
+    "Bảo mật, khả năng chị lỗi",
+    "Tất cả đều đúng"
+    ] },
+  { "n": 77, "c": 6, "q": "Đồng hồ vật lý dùng để", "a": 0, "t": "Đồng hồ vật lý đo <b>thời gian trong ngày</b> (khác đồng hồ logic theo dõi thứ tự sự kiện).",
+    "o": [
+    "đo thời gian trong ngày",
+    "thống nhất các hoạt động của các tiến trình, sự kiện v.v... trên toàn hệ thống",
+    "theo dõi thứ tự của các sự kiện trong hệ thống",
+    "Tất cả đều đúng"
+    ] },
+  { "n": 78, "c": 2, "q": "Điểm khác nhau cơ bản giữa hệ thống cấu trúc bộ nhớ chia sẻ vật lý và cấu trúc bộ nhớ chia sẻ vật lý phân tán là :", "a": 0, "t": "Khác biệt cốt lõi: bộ nhớ mỗi PE độc lập (phân tán) vs chia sẻ (vật lý).",
+    "o": [
+    "Bộ nhớ đối với mỗi đơn vị xử lý cơ sở (PE) là độc lập đối với cấu trúc bộ nhớ chia sẻ vật lý phân tán nhưng chia sẻ đối với bộ nhớ chia sẻ vật lý",
+    "Hoạt động trên hạ tầng mạng khác nhau",
+    "Giao tiếp giữa các bộ xử lý ở bộ nhớ chia sẻ vật lý diễn ra thông qua trao đổi thông điệp trên mạng cục bộ, trong khi bộ nhớ chia sẻ vật lý phân tán thông qua trao đổi thông điệp trên mạng internet",
+    "Tất cả đều đúng"
+    ] },
+  { "n": 79, "c": 6, "q": "Mục đích chính của giải thuật bầu cử là :", "a": 0, "t": "Bầu cử để tìm <b>điều phối viên mới</b> khi cái cũ chết.",
+    "o": [
+    "Tìm ra một tiến trình làm điều phối viên nếu điều phối bị chết",
+    "Giải quyết tranh chấp tài nguyên giữa các tiến trình",
+    "Hỗ trợ cho giải thuật loại trừ tương hỗ",
+    "Tất cả đều đúng"
+    ] },
+  { "n": 80, "c": 4, "q": "RMI hoặc thủ tục triệu gọi từ xa (RPC) là một...................dựa trên Java", "a": 2, "t": "RMI/RPC là <b>middleware</b> dựa trên Java.",
+    "o": [
+    "phần mềm",
+    "dịch vụ",
+    "middleware",
+    "Tất cả a,b,c"
+    ] },
+  { "n": 81, "c": 6, "q": "Loại trừ tương hỗ là quá trình .................................... của các tiến trình với một ........................... hoặc ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,..thực hiện theo cách .......................", "a": 0, "t": "Loại trừ tương hỗ: truy cập đồng thời tài nguyên/dữ liệu chia sẻ một cách loại trừ lẫn nhau.",
+    "o": [
+    "truy cập đồng thời, tài nguyên, dữ liệu được chia sẻ, loại trừ lẫn nhau",
+    "hỗ trợ nhau, tài nguyên, dữ liệu được chia sẻ, loại trừ lẫn nhau",
+    "truy cập đồng thời, dữ liệu, dữ liệu được chia sẻ, loại trừ lẫn nhau",
+    "truy cập đồng thời, tài nguyên,tiến trình , loại trừ lẫn nhau"
+    ] },
+  { "n": 82, "c": 5, "q": "Tên thực thể được thực hiện phân giải tên khi cần dịch ra các dữ liệu về tài nguyên được đặt tên", "a": 0, "t": "Cần dịch tên ra dữ liệu tài nguyên thì phân giải tên → Đúng.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 83, "c": 3, "q": "Socket có thể được phân loại theo các kiểu nào sau đây", "a": 0, "t": "Socket: datagram, stream, raw — nhớ 'DSR'.",
+    "o": [
+    "datagram, stream, raw sockets",
+    "bytes, datagram, string",
+    "stream, raw sockets",
+    "byte, string"
+    ] },
+  { "n": 84, "c": 6, "q": "Nguyên tắc cơ bản của thuật toán Lamport để khử độ sai lệch biên ở thuật toán Cristian là:", "a": 2, "t": "Câu hỏi ghi 'Lamport' nhưng mô tả C chính là thuật toán Berkeley (trung bình). <b>Lưu ý:</b> đáp án đang được đối chiếu thêm, hãy hỏi lại giảng viên để chắc chắn.",
+    "o": [
+    "Điều chỉnh đồng hồ cục bộ tại các trạm theo thuật toán Cristian cho toàn hệ thống",
+    "Chọn 1 trạm làm thời gian “kim cương” điều chỉnh các trạm còn lại theo thời gian của trạm được lấy là thời gian kim cương.",
+    "Điều chỉnh giá trị của các đồng hồ cục bộ tại các trạm theo giá trị thời gian trung bình của hệ thống lấy theo các trạm làm việc",
+    "A, B, C sai"
+    ] },
+  { "n": 85, "c": 6, "q": "Sự sai lệch biên trong quá trình trao đổi thông điệp trên mạng tập trung theo thuật toán Cristian là do ?", "a": 3, "t": "Sai lệch Cristian do: mạng + đồng hồ cục bộ + xử lý server → tất cả.",
+    "o": [
+    "Cấu trúc mạng",
+    "Đồng hồ cục bộ tại mỗi trạm làm việc",
+    "Thời gian xử lý của Server",
+    "A, B, C đều đúng"
+    ] },
+  { "n": 86, "c": 4, "q": "Microsoft xây dựng DCOM nhằm mục đích", "a": 0, "t": "DCOM: framework phân tán hướng đối tượng của Microsoft.",
+    "o": [
+    "Cung cấp một framework phân tán dựa trên mô hình hướng đối tượng",
+    "Cung cấp kỹ thuật lập trình hướng đối tượng cho các ứng dụng phân tán",
+    "Cung cấp kỹ thuật lập trình triệu gọi từ xa",
+    "Cung câp một Middleware giữa OLE và COM"
+    ] },
+  { "n": 87, "c": 2, "q": "Việc phân loại hệ phân tán theo Flynn dựa vào", "a": 2, "t": "Flynn: số <b>dòng chỉ dẫn</b> và số <b>dòng dữ liệu</b> (SISD/SIMD/MISD/MIMD).",
+    "o": [
+    "Số lượng CPU và số lượng các thành phần kiểm soát",
+    "Số lượng CPU và số hệ điều hành sử dụng",
+    "Số lương các dòng chỉ dẫn và số dòng dữ liệu",
+    "Tất cả đều đúng"
+    ] },
+  { "n": 88, "c": 6, "q": "Hạn chế chính của giải thuật Token Ring là ? ( Chọn 2 phương án )", "a": 0, "t": "Chọn 2: starvation (A) và thắt cổ chai (C). Đề có vấn đề, hỏi lại giảng viên. <b>Lưu ý:</b> câu này chọn 2 phương án theo đề (đáp án: A, C).",
+    "o": [
+    "Hiện tượng “đói - Starvation” tài nguyên khi hệ thống có nhiều tiến trình tham gia",
+    "Tiến trình làm điều phối viên có thể bị chết nên hệ thống rơi vào trường hợp bế tắc",
+    "Có thể dẫn hiện tượng thắt cổ chai",
+    "Tất cả hạn chế nêu trên"
+    ] },
+  { "n": 89, "c": 7, "q": "ORB trong hệ thống phân tán được gọi là ……..", "a": 0, "t": "ORB = <b>đối tượng môi giới yêu cầu</b>.",
+    "o": [
+    "đối tượng môi giới yêu cầu",
+    "đối tượng tái tạo",
+    "đối tượng tự trị",
+    "đối tượng di trú"
+    ] },
+  { "n": 90, "c": 5, "q": "Có 3 kiểu ràng buộc (binding) giữa tên và đối tượng : kết buộc tĩnh (static bingding), kết buộc sỡm (Early bingding), kết buộc trễ (Late binding)", "a": 0, "t": "3 kiểu binding: static, early, late → Đúng.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 91, "c": 2, "q": "Có bao nhiêu mô hình dịch vụ cơ bản trên các hệ thống mạng máy tính ?", "a": 1, "t": "3 mô hình dịch vụ: tập trung, phân phối, cộng tác.",
+    "o": [
+    "2",
+    "3",
+    "4",
+    "5"
+    ] },
+  { "n": 92, "c": 1, "q": "Vì sao các ứng dụng phân tán được quan tâm nhiều hơn trong phát triển ứng dụng ngày nay?", "a": 3, "t": "Ứng dụng phân tán được ưa chuộng: mở rộng + minh bạch + chịu lỗi + chia sẻ → tất cả.",
+    "o": [
+    "nhờ khả năng mở rộng và tùy biến của các nền tảng hệ thống",
+    "nhờ tính minh bạch vị trí các nguồn lực",
+    "khả năng chịu lỗi và chia sẻ các nguồn lực",
+    "Tất cả đều đúng"
+    ] },
+  { "n": 93, "c": 1, "q": "Ngôn ngữ lập trinh cho tính toán phân tán cần thỏa mãn đặc điểm gì?", "a": 3, "t": "Ngôn ngữ phân tán cần: song song + giao tiếp + chịu lỗi → tất cả.",
+    "o": [
+    "xử lý song song",
+    "khả năng giao tiếp",
+    "tính chịu lỗi",
+    "Tất cả các đặc điểm trên"
+    ] },
+  { "n": 94, "c": 2, "q": "Để đáp ứng tinh sẵn sàng cao, độ tin cậy cao, khả năng mở rộng cao thì mô hình phân tán ...............................được lựa chọn", "a": 3, "t": "Sẵn sàng cao + tin cậy cao + mở rộng cao = <b>Cloud computing</b>.",
+    "o": [
+    "Client /Server",
+    "Tính toán đám (Cluster computing)",
+    "Tính toán lưới (Grid computing)",
+    "Điện toán đám mây(Cloud computing)"
+    ] },
+  { "n": 95, "c": 2, "q": "Đối với hệ thống yêu cầu xử lý lượng dữ liệu lớn, phân bổ trên môi trường rộng lớn, xử lý uyển chuyển, mô hình phân tán nào được lựa chọn ?", "a": 0, "t": "Dữ liệu lớn + phạm vi rộng + uyển chuyển = <b>Grid computing</b>.",
+    "o": [
+    "Tính toán lưới (Grid computing)",
+    "Tính toán đám (Cluster computing)",
+    "Điện toán đám mây (Cloud computing)",
+    "Tất cả đều đúng"
+    ] },
+  { "n": 96, "c": 1, "q": "Các hệ thống hỗ trợ file như trình download bittorent được xem như hệ thống phân tán", "a": 0, "t": "BitTorrent là hệ phân tán (P2P) → Đúng.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 97, "c": 1, "q": "Phát biểu nào sau đây là đúng nhất về hệ phân tán", "a": 2, "t": "Định nghĩa Tanenbaum: các máy độc lập hiện ra như một hệ thống thống nhất → C.",
+    "o": [
+    "Hệ phân tán là một hệ có chức năng và dữ liệu phân tán trên các máy trạm được kết nối với nhau qua mạng máy tính.",
+    "Hệ phân tán là một tập các máy tính tự trị được kết nối với nhau bởi mạng máy tính và được cài đặt phần mềm phân tán.",
+    "Hệ phân tán là một tập các máy tính độc lập giao tiếp với nhau như một hệ thống thống nhất và toàn vẹn.",
+    "Hệ phân tán là một hệ thống bao gồm :phần cứng phân tán, kiểm soát phân tán, và dữ liệu phân tán."
+    ] },
+  { "n": 98, "c": 6, "q": "Có thể chỉ sử dụng thuật toán loại trừ tương hỗ mà không cần đến thuật toán bầu cử", "a": 0, "t": "RA và Token Ring không cần bầu cử riêng → Đúng.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 99, "c": 1, "q": "Các hệ thống ứng dụng Web được xem như hệ thống phân tán", "a": 0, "t": "Ứng dụng Web (client-server qua mạng) là hệ phân tán → Đúng.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+  { "n": 100, "c": 6, "q": "Đồng hồ ly tưởng có dC/dt(UTC) > 1 hoặc dC/dt(UTC) = 1", "a": 1, "t": "Đồng hồ lý tưởng: dC/dt = 1 CHÍNH XÁC (không phải > 1) → Sai.",
+    "o": [
+    "Đúng",
+    "Sai"
+    ] },
+];
+
+/* ============ FLASHCARD 40 CÂU HỎI NGẮN: {c: chương, q, a} ============ */
+const FLASH = [];
+
+/* ============ DÀN Ý TỰ LUẬN ============ */
+const ESSAYS = [
+  { "t": "Bài 01 (RMI). Dãy Fibonacci – tìm số hạng",
+    "h": "Client tạo dãy Fibonacci F(n) với F(1)=a, F(2)=b, gửi F(1), F(2) và k (k>2, số phần tử) cho Server. Sau đó Client gửi số nguyên p, yêu cầu Server cho biết p có tồn tại trong dãy không, nếu có thì ở số hạng thứ mấy.\n\n1. Các giá trị a, b, k, p nhập từ bàn phím trên cùng dòng, cách nhau bởi dấu \";\". Lặp lại cho đến khi dòng gửi có dạng \"stop\".\n2. a, b, k, p đọc từ file input.txt tạo sẵn.\n\n\n\n<div class=\"codewrap\"><div class=\"codehead\"><span>FibonacciRemote.java</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- FibonacciRemote.java ---\nimport java.rmi.*;\npublic interface FibonacciRemote extends Remote {\n    String checkFib(long a, long b, int k, long p) throws RemoteException;\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>FibonacciImpl.java</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- FibonacciImpl.java ---\nimport java.rmi.*;\nimport java.rmi.server.*;\npublic class FibonacciImpl extends UnicastRemoteObject implements FibonacciRemote {\n    public FibonacciImpl() throws RemoteException {}\n    public String checkFib(long a, long b, int k, long p) throws RemoteException {\n        long[] f = new long[k];\n        f[0] = a; if (k &gt; 1) f[1] = b;\n        for (int i = 2; i &lt; k; i++) f[i] = f[i-1] + f[i-2];\n        for (int i = 0; i &lt; k; i++)\n            if (f[i] == p) return &quot;p ton tai o so hang thu &quot; + (i+1);\n        return &quot;p khong ton tai trong day&quot;;\n    }\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>Server</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Server ---\nimport java.rmi.registry.*;\npublic class FibServer {\n    public static void main(String[] args) throws Exception {\n        FibonacciImpl obj = new FibonacciImpl();\n        LocateRegistry.createRegistry(1099);\n        java.rmi.Naming.rebind(&quot;Fibonacci&quot;, obj);\n        System.out.println(&quot;Server san sang...&quot;);\n    }\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>Client</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Client ---\nimport java.rmi.*;\nimport java.util.*;\npublic class FibClient {\n    public static void main(String[] args) throws Exception {\n        FibonacciRemote stub = (FibonacciRemote) Naming.lookup(&quot;rmi://localhost/Fibonacci&quot;);\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.print(&quot;Nhap a;b;k;p (stop de dung): &quot;);\n            String line = sc.nextLine().trim();\n            if (line.equalsIgnoreCase(&quot;stop&quot;)) break;\n            String[] s = line.split(&quot;;&quot;);\n            long a = Long.parseLong(s[0]), b = Long.parseLong(s[1]);\n            int k = Integer.parseInt(s[2]);\n            long p = Long.parseLong(s[3]);\n            System.out.println(stub.checkFib(a, b, k, p));\n        }\n    }\n}</code></pre></div>" },
+  { "t": "Bài 02 (TCP). Số hoàn thiện trong dãy",
+    "h": "Client tạo dãy số nguyên, gửi cho Server, yêu cầu Server cho biết những số nào trong dãy là số hoàn thiện, ở số hạng thứ mấy. Số hoàn thiện: tổng các ước tự nhiên (trừ chính nó) bằng chính nó. VD: 6 = 1+2+3.\n\n1. Dãy nhập từ bàn phím trên cùng dòng, mỗi số cách nhau bởi \";\".\n2. Dừng khi Client nhập \"stop\".\n\n\n\n<div class=\"codewrap\"><div class=\"codehead\"><span>Server</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Server ---\nimport java.io.*; import java.net.*;\npublic class PerfectServer {\n    static boolean isPerfect(int n) {\n        if (n &lt;= 1) return false;\n        int sum = 0;\n        for (int i = 1; i &lt; n; i++) if (n % i == 0) sum += i;\n        return sum == n;\n    }\n    public static void main(String[] args) throws Exception {\n        ServerSocket ss = new ServerSocket(5000);\n        Socket s = ss.accept();\n        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));\n        PrintWriter out = new PrintWriter(s.getOutputStream(), true);\n        String line;\n        while (!(line = in.readLine()).equalsIgnoreCase(&quot;stop&quot;)) {\n            String[] parts = line.split(&quot;;&quot;);\n            StringBuilder sb = new StringBuilder();\n            for (int i = 0; i &lt; parts.length; i++) {\n                int v = Integer.parseInt(parts[i].trim());\n                if (isPerfect(v)) sb.append(v).append(&quot; o vi tri &quot;).append(i+1).append(&quot;; &quot;);\n            }\n            out.println(sb.length() == 0 ? &quot;Khong co so hoan thien&quot; : sb.toString());\n        }\n        s.close(); ss.close();\n    }\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>Client</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Client ---\nimport java.io.*; import java.net.*; import java.util.*;\npublic class PerfectClient {\n    public static void main(String[] args) throws Exception {\n        Socket s = new Socket(&quot;localhost&quot;, 5000);\n        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));\n        PrintWriter out = new PrintWriter(s.getOutputStream(), true);\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.print(&quot;Nhap day so (stop de dung): &quot;);\n            String line = sc.nextLine();\n            out.println(line);\n            if (line.equalsIgnoreCase(&quot;stop&quot;)) break;\n            System.out.println(&quot;Server: &quot; + in.readLine());\n        }\n        s.close();\n    }\n}</code></pre></div>" },
+  { "t": "Bài 03 (TCP). Giải phương trình bậc 2",
+    "h": "Client tạo 3 số a, b, c, gửi cho Server, yêu cầu giải phương trình ax²+bx+c=0. Hiển thị nghiệm trên màn hình Client.\n\n1. a, b, c nhập từ bàn phím trên cùng dòng, cách nhau bởi \";\".\n2. Dừng khi Client nhập \"stop\".\n\n\n\n<div class=\"codewrap\"><div class=\"codehead\"><span>Server: giai ax^2 + bx + c = 0</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Server: giai ax^2 + bx + c = 0 ---\nimport java.io.*; import java.net.*;\npublic class QuadServer {\n    public static void main(String[] args) throws Exception {\n        ServerSocket ss = new ServerSocket(5001);\n        Socket s = ss.accept();\n        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));\n        PrintWriter out = new PrintWriter(s.getOutputStream(), true);\n        String line;\n        while (!(line = in.readLine()).equalsIgnoreCase(&quot;stop&quot;)) {\n            String[] p = line.split(&quot;;&quot;);\n            double a = Double.parseDouble(p[0]), b = Double.parseDouble(p[1]), c = Double.parseDouble(p[2]);\n            String res;\n            if (a == 0) {\n                res = (b == 0) ? &quot;Vo nghiem&quot; : &quot;x = &quot; + (-c / b);\n            } else {\n                double d = b*b - 4*a*c;\n                if (d &lt; 0) res = &quot;Vo nghiem&quot;;\n                else if (d == 0) res = &quot;Nghiem kep x = &quot; + (-b/(2*a));\n                else res = &quot;x1 = &quot; + ((-b+Math.sqrt(d))/(2*a)) + &quot;, x2 = &quot; + ((-b-Math.sqrt(d))/(2*a));\n            }\n            out.println(res);\n        }\n        s.close(); ss.close();\n    }\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>Client</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Client ---\nimport java.io.*; import java.net.*; import java.util.*;\npublic class QuadClient {\n    public static void main(String[] args) throws Exception {\n        Socket s = new Socket(&quot;localhost&quot;, 5001);\n        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));\n        PrintWriter out = new PrintWriter(s.getOutputStream(), true);\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.print(&quot;Nhap a;b;c (stop de dung): &quot;);\n            String line = sc.nextLine();\n            out.println(line);\n            if (line.equalsIgnoreCase(&quot;stop&quot;)) break;\n            System.out.println(&quot;Nghiem: &quot; + in.readLine());\n        }\n        s.close();\n    }\n}</code></pre></div>" },
+  { "t": "Bài 04 (TCP). Tính S = 25*(a+b) − 6*(3c−2d) với 2 Server",
+    "h": "Client gửi đến:\n+ Server 1: các giá trị a và b, yêu cầu tính tổng a+b\n+ Server 2: các giá trị c và d, yêu cầu tính hiệu 3c−2d\nHiển thị kết quả S trên màn hình Client.\n\n1. a, b, c, d nhập từ bàn phím trên cùng dòng, cách nhau bởi \";\".\n2. Dừng khi Client nhập \"quit\".\n\n\n\n<div class=\"codewrap\"><div class=\"codehead\"><span>Server1: tinh a+b (port 5002)</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Server1: tinh a+b (port 5002) ---\nimport java.io.*; import java.net.*;\npublic class SumServer {\n    public static void main(String[] args) throws Exception {\n        ServerSocket ss = new ServerSocket(5002);\n        Socket s = ss.accept();\n        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));\n        PrintWriter out = new PrintWriter(s.getOutputStream(), true);\n        String line;\n        while (!(line = in.readLine()).equalsIgnoreCase(&quot;quit&quot;)) {\n            String[] p = line.split(&quot;;&quot;);\n            out.println(Double.parseDouble(p[0]) + Double.parseDouble(p[1]));\n        }\n        s.close(); ss.close();\n    }\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>Server2: tinh 3c-2d (port 5003)</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Server2: tinh 3c-2d (port 5003) ---\nimport java.io.*; import java.net.*;\npublic class DiffServer {\n    public static void main(String[] args) throws Exception {\n        ServerSocket ss = new ServerSocket(5003);\n        Socket s = ss.accept();\n        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));\n        PrintWriter out = new PrintWriter(s.getOutputStream(), true);\n        String line;\n        while (!(line = in.readLine()).equalsIgnoreCase(&quot;quit&quot;)) {\n            String[] p = line.split(&quot;;&quot;);\n            double c = Double.parseDouble(p[0]), d = Double.parseDouble(p[1]);\n            out.println(3*c - 2*d);\n        }\n        s.close(); ss.close();\n    }\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>Client: S = 25*(a+b) - 6*(3c-2d)</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Client: S = 25*(a+b) - 6*(3c-2d) ---\nimport java.io.*; import java.net.*; import java.util.*;\npublic class CalcClient {\n    public static void main(String[] args) throws Exception {\n        Socket s1 = new Socket(&quot;localhost&quot;, 5002);\n        Socket s2 = new Socket(&quot;localhost&quot;, 5003);\n        PrintWriter o1 = new PrintWriter(s1.getOutputStream(), true);\n        BufferedReader i1 = new BufferedReader(new InputStreamReader(s1.getInputStream()));\n        PrintWriter o2 = new PrintWriter(s2.getOutputStream(), true);\n        BufferedReader i2 = new BufferedReader(new InputStreamReader(s2.getInputStream()));\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.print(&quot;Nhap a;b;c;d (quit de dung): &quot;);\n            String line = sc.nextLine();\n            if (line.equalsIgnoreCase(&quot;quit&quot;)) { o1.println(&quot;quit&quot;); o2.println(&quot;quit&quot;); break; }\n            String[] p = line.split(&quot;;&quot;);\n            o1.println(p[0] + &quot;;&quot; + p[1]);\n            o2.println(p[2] + &quot;;&quot; + p[3]);\n            double sum = Double.parseDouble(i1.readLine());\n            double diff = Double.parseDouble(i2.readLine());\n            System.out.println(&quot;S = &quot; + (25*sum - 6*diff));\n        }\n        s1.close(); s2.close();\n    }\n}</code></pre></div>" },
+  { "t": "Bài 05 (RMI). Giải phương trình bậc 2",
+    "h": "Như Bài 03 nhưng thực hiện bằng kỹ thuật RMI.\n\n1. a, b, c nhập từ bàn phím trên cùng dòng, cách nhau bởi \";\".\n2. Dừng khi Client nhập \"stop\".\n\n\n\n<div class=\"codewrap\"><div class=\"codehead\"><span>QuadRemote.java</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- QuadRemote.java ---\nimport java.rmi.*;\npublic interface QuadRemote extends Remote {\n    String solve(double a, double b, double c) throws RemoteException;\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>QuadImpl.java</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- QuadImpl.java ---\nimport java.rmi.*;\nimport java.rmi.server.*;\npublic class QuadImpl extends UnicastRemoteObject implements QuadRemote {\n    public QuadImpl() throws RemoteException {}\n    public String solve(double a, double b, double c) throws RemoteException {\n        if (a == 0) return (b == 0) ? &quot;Vo nghiem&quot; : &quot;x = &quot; + (-c/b);\n        double d = b*b - 4*a*c;\n        if (d &lt; 0) return &quot;Vo nghiem&quot;;\n        if (d == 0) return &quot;Nghiem kep x = &quot; + (-b/(2*a));\n        return &quot;x1 = &quot; + ((-b+Math.sqrt(d))/(2*a)) + &quot;, x2 = &quot; + ((-b-Math.sqrt(d))/(2*a));\n    }\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>Server</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Server ---\nimport java.rmi.registry.*;\npublic class QuadRMIServer {\n    public static void main(String[] args) throws Exception {\n        LocateRegistry.createRegistry(1099);\n        java.rmi.Naming.rebind(&quot;QuadSolver&quot;, new QuadImpl());\n        System.out.println(&quot;Server san sang...&quot;);\n    }\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>Client</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Client ---\nimport java.rmi.*; import java.util.*;\npublic class QuadRMIClient {\n    public static void main(String[] args) throws Exception {\n        QuadRemote stub = (QuadRemote) Naming.lookup(&quot;rmi://localhost/QuadSolver&quot;);\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.print(&quot;Nhap a;b;c (stop de dung): &quot;);\n            String line = sc.nextLine();\n            if (line.equalsIgnoreCase(&quot;stop&quot;)) break;\n            String[] p = line.split(&quot;;&quot;);\n            System.out.println(stub.solve(\n                Double.parseDouble(p[0]), Double.parseDouble(p[1]), Double.parseDouble(p[2])));\n        }\n    }\n}</code></pre></div>" },
+  { "t": "Bài 06 (RMI). Tính S = 25*(a+b) − 6*(3c−2d) với 2 Server",
+    "h": "Như Bài 04 nhưng thực hiện bằng kỹ thuật RMI.\n\n1. a, b, c, d nhập từ bàn phím trên cùng dòng, cách nhau bởi \";\".\n2. Dừng khi Client nhập \"quit\".\n\n\n\n<div class=\"codewrap\"><div class=\"codehead\"><span>CalcRemote.java</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- CalcRemote.java ---\nimport java.rmi.*;\npublic interface CalcRemote extends Remote {\n    double add(double a, double b) throws RemoteException;\n    double calc(double c, double d) throws RemoteException; // 3c-2d\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>CalcImpl.java</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- CalcImpl.java ---\nimport java.rmi.*;\nimport java.rmi.server.*;\npublic class CalcImpl extends UnicastRemoteObject implements CalcRemote {\n    public CalcImpl() throws RemoteException {}\n    public double add(double a, double b) throws RemoteException { return a + b; }\n    public double calc(double c, double d) throws RemoteException { return 3*c - 2*d; }\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>Server (dang ky 2 ten)</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Server (dang ky 2 ten) ---\nimport java.rmi.registry.*;\npublic class CalcRMIServer {\n    public static void main(String[] args) throws Exception {\n        LocateRegistry.createRegistry(1099);\n        CalcImpl obj = new CalcImpl();\n        java.rmi.Naming.rebind(&quot;Adder&quot;, obj);\n        java.rmi.Naming.rebind(&quot;Calculator&quot;, obj);\n        System.out.println(&quot;Servers san sang...&quot;);\n    }\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>Client: S = 25*(a+b) - 6*(3c-2d)</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Client: S = 25*(a+b) - 6*(3c-2d) ---\nimport java.rmi.*; import java.util.*;\npublic class CalcRMIClient {\n    public static void main(String[] args) throws Exception {\n        CalcRemote adder = (CalcRemote) Naming.lookup(&quot;rmi://localhost/Adder&quot;);\n        CalcRemote calc = (CalcRemote) Naming.lookup(&quot;rmi://localhost/Calculator&quot;);\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.print(&quot;Nhap a;b;c;d (quit de dung): &quot;);\n            String line = sc.nextLine();\n            if (line.equalsIgnoreCase(&quot;quit&quot;)) break;\n            String[] p = line.split(&quot;;&quot;);\n            double sum = adder.add(Double.parseDouble(p[0]), Double.parseDouble(p[1]));\n            double diff = calc.calc(Double.parseDouble(p[2]), Double.parseDouble(p[3]));\n            System.out.println(&quot;S = &quot; + (25*sum - 6*diff));\n        }\n    }\n}</code></pre></div>" },
+  { "t": "Bài 07 (TCP). Đăng nhập hệ thống",
+    "h": "Client chạy chương trình, hiển thị màn hình Welcome và yêu cầu nhập User Name và Password (VD: User Name: CS420A).\n- Nhập sai thì yêu cầu nhập lại, tối đa 3 lần. Sau 3 lần không thành công thì ngắt kết nối.\n- Thành công: Server gửi \"Chào mừng bạn đã đăng nhập thành công vào hệ thống\".\n- Server đọc thông tin đăng nhập từ file user.txt thiết lập sẵn.\n\n\n\n<div class=\"codewrap\"><div class=\"codehead\"><span>Server: doc user.txt, toi da 3 lan</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Server: doc user.txt, toi da 3 lan ---\nimport java.io.*; import java.net.*; import java.util.*;\npublic class LoginServer {\n    public static void main(String[] args) throws Exception {\n        Map&lt;String,String&gt; users = new HashMap&lt;&gt;();\n        BufferedReader fr = new BufferedReader(new FileReader(&quot;user.txt&quot;));\n        String l;\n        while ((l = fr.readLine()) != null) {\n            String[] p = l.trim().split(&quot;\\s+&quot;);\n            if (p.length &gt;= 2) users.put(p[0], p[1]);\n        }\n        fr.close();\n        ServerSocket ss = new ServerSocket(5004);\n        Socket s = ss.accept();\n        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));\n        PrintWriter out = new PrintWriter(s.getOutputStream(), true);\n        int tries = 0;\n        boolean ok = false;\n        while (tries &lt; 3 &amp;&amp; !ok) {\n            String u = in.readLine(), pw = in.readLine();\n            if (u != null &amp;&amp; users.containsKey(u) &amp;&amp; users.get(u).equals(pw)) {\n                ok = true;\n                out.println(&quot;Chao mung ban da dang nhap thanh cong vao he thong&quot;);\n            } else {\n                tries++;\n                out.println(tries &gt;= 3 ? &quot;FAIL&quot; : &quot;Sai, moi nhap lai&quot;);\n            }\n        }\n        s.close(); ss.close();\n    }\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>Client</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Client ---\nimport java.io.*; import java.net.*; import java.util.*;\npublic class LoginClient {\n    public static void main(String[] args) throws Exception {\n        Socket s = new Socket(&quot;localhost&quot;, 5004);\n        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));\n        PrintWriter out = new PrintWriter(s.getOutputStream(), true);\n        Scanner sc = new Scanner(System.in);\n        System.out.println(&quot;=== Welcome ===&quot;);\n        while (true) {\n            System.out.print(&quot;User Name: &quot;); out.println(sc.nextLine());\n            System.out.print(&quot;Password: &quot;);  out.println(sc.nextLine());\n            String res = in.readLine();\n            System.out.println(res);\n            if (!res.equals(&quot;Sai, moi nhap lai&quot;)) break;\n        }\n        s.close();\n    }\n}</code></pre></div>" },
+  { "t": "Bài 08 (TCP). Kiểm tra dãy số nguyên",
+    "h": "Client khởi tạo dãy số nguyên gồm n phần tử, mỗi số cách nhau dấu \"-\", gửi đến Server. Server kiểm tra:\n- Dãy có hợp lệ không (đủ n số nguyên, đúng định dạng). Nếu không thì yêu cầu nhập lại.\n- Dãy có tăng dần không, có bao nhiêu số chẵn và vị trí các số chẵn.\n\n1. Nhập liên tục đến khi Client nhập \"quit\" thì Server đóng kết nối.\n2. Dãy nhập từ file input.txt cho trước.\n\n\n\n<div class=\"codewrap\"><div class=\"codehead\"><span>Server: kiem tra day so</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Server: kiem tra day so ---\nimport java.io.*; import java.net.*;\npublic class ArrayServer {\n    public static void main(String[] args) throws Exception {\n        ServerSocket ss = new ServerSocket(5005);\n        Socket s = ss.accept();\n        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));\n        PrintWriter out = new PrintWriter(s.getOutputStream(), true);\n        String line;\n        while (!(line = in.readLine()).equalsIgnoreCase(&quot;quit&quot;)) {\n            String[] parts = line.split(&quot;-&quot;);\n            int n;\n            try { n = Integer.parseInt(parts[0].trim()); }\n            catch (Exception e) { out.println(&quot;Day khong hop le: thieu n&quot;); continue; }\n            if (parts.length - 1 != n) { out.println(&quot;Day khong hop le: khong du n so&quot;); continue; }\n            int[] a = new int[n];\n            boolean valid = true;\n            for (int i = 0; i &lt; n; i++) {\n                try { a[i] = Integer.parseInt(parts[i+1].trim()); }\n                catch (Exception e) { valid = false; break; }\n            }\n            if (!valid) { out.println(&quot;Day khong hop le: khong phai so nguyen&quot;); continue; }\n            boolean inc = true;\n            for (int i = 1; i &lt; n; i++) if (a[i] &lt;= a[i-1]) { inc = false; break; }\n            StringBuilder evens = new StringBuilder();\n            int cnt = 0;\n            for (int i = 0; i &lt; n; i++)\n                if (a[i] % 2 == 0) { cnt++; evens.append(a[i]).append(&quot;@&quot; ).append(i+1).append(&quot; &quot;); }\n            out.println(&quot;Tang dan: &quot; + inc + &quot; | So chan: &quot; + cnt + &quot; (&quot; + evens.toString().trim() + &quot;)&quot;);\n        }\n        s.close(); ss.close();\n    }\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>Client</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Client ---\nimport java.io.*; import java.net.*; import java.util.*;\npublic class ArrayClient {\n    public static void main(String[] args) throws Exception {\n        Socket s = new Socket(&quot;localhost&quot;, 5005);\n        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));\n        PrintWriter out = new PrintWriter(s.getOutputStream(), true);\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.print(&quot;Nhap n-so1-so2... (quit de dung): &quot;);\n            String line = sc.nextLine();\n            out.println(line);\n            if (line.equalsIgnoreCase(&quot;quit&quot;)) break;\n            System.out.println(&quot;Server: &quot; + in.readLine());\n        }\n        s.close();\n    }\n}</code></pre></div>" },
+  { "t": "Bài 09 (RMI). Kiểm tra dãy số nguyên",
+    "h": "Như Bài 08 nhưng thực hiện bằng kỹ thuật RMI.\n\na. Nhập liên tục đến khi Client nhập \"quit\".\nb. Dãy nhập từ file input.txt cho trước.\n\n\n\n<div class=\"codewrap\"><div class=\"codehead\"><span>ArrayRemote.java</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- ArrayRemote.java ---\nimport java.rmi.*;\npublic interface ArrayRemote extends Remote {\n    String checkArray(String input) throws RemoteException;\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>ArrayImpl.java</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- ArrayImpl.java ---\nimport java.rmi.*;\nimport java.rmi.server.*;\npublic class ArrayImpl extends UnicastRemoteObject implements ArrayRemote {\n    public ArrayImpl() throws RemoteException {}\n    public String checkArray(String input) throws RemoteException {\n        String[] parts = input.split(&quot;-&quot;);\n        int n;\n        try { n = Integer.parseInt(parts[0].trim()); }\n        catch (Exception e) { return &quot;Day khong hop le: thieu n&quot;; }\n        if (parts.length - 1 != n) return &quot;Day khong hop le: khong du n so&quot;;\n        int[] a = new int[n];\n        for (int i = 0; i &lt; n; i++) {\n            try { a[i] = Integer.parseInt(parts[i+1].trim()); }\n            catch (Exception e) { return &quot;Day khong hop le: khong phai so nguyen&quot;; }\n        }\n        boolean inc = true;\n        for (int i = 1; i &lt; n; i++) if (a[i] &lt;= a[i-1]) { inc = false; break; }\n        StringBuilder evens = new StringBuilder();\n        int cnt = 0;\n        for (int i = 0; i &lt; n; i++)\n            if (a[i] % 2 == 0) { cnt++; evens.append(a[i]).append(&quot;@&quot;).append(i+1).append(&quot; &quot;); }\n        return &quot;Tang dan: &quot; + inc + &quot; | So chan: &quot; + cnt + &quot; (&quot; + evens.toString().trim() + &quot;)&quot;;\n    }\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>Server</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Server ---\nimport java.rmi.registry.*;\npublic class ArrayRMIServer {\n    public static void main(String[] args) throws Exception {\n        LocateRegistry.createRegistry(1099);\n        java.rmi.Naming.rebind(&quot;ArrayChecker&quot;, new ArrayImpl());\n        System.out.println(&quot;Server san sang...&quot;);\n    }\n}\n\n</code></pre></div>\n<div class=\"codewrap\"><div class=\"codehead\"><span>Client</span><button class=\"copybtn\" onclick=\"copyCode(this)\">Copy</button></div><pre class=\"codeblock\"><code>// --- Client ---\nimport java.rmi.*; import java.util.*;\npublic class ArrayRMIClient {\n    public static void main(String[] args) throws Exception {\n        ArrayRemote stub = (ArrayRemote) Naming.lookup(&quot;rmi://localhost/ArrayChecker&quot;);\n        Scanner sc = new Scanner(System.in);\n        // Doc tu file input.txt\n        System.out.print(&quot;Nhap tu file? (y/n): &quot;);\n        if (sc.nextLine().equalsIgnoreCase(&quot;y&quot;)) {\n            java.nio.file.Path p = java.nio.file.Paths.get(&quot;input.txt&quot;);\n            for (String line : java.nio.file.Files.readAllLines(p)) {\n                if (line.trim().equalsIgnoreCase(&quot;quit&quot;)) break;\n                System.out.println(&quot;&gt;&gt; &quot; + line + &quot; =&gt; &quot; + stub.checkArray(line.trim()));\n            }\n        } else {\n            while (true) {\n                System.out.print(&quot;Nhap n-so1-so2... (quit de dung): &quot;);\n                String line = sc.nextLine();\n                if (line.equalsIgnoreCase(&quot;quit&quot;)) break;\n                System.out.println(stub.checkArray(line));\n            }\n        }\n    }\n}</code></pre></div>" },
+];;;
+
+/* ============ LOGIC ỨNG DỤNG ============ */
+const CHAP_NAMES = {
+  1: "Tổng quan hệ phân tán",
+  2: "Kiến trúc hệ phân tán",
+  3: "Giao tiếp bằng Socket",
+  4: "RPC, RMI và Middleware",
+  5: "Đặt tên trong hệ phân tán",
+  6: "Đồng bộ hóa",
+  7: "Công nghệ phân tán hiện đại"
+};
+const LETTERS = ["A","B","C","D"];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function $(id){return document.getElementById(id);}
+
+/* ---- Tabs ---- */
+document.querySelectorAll(".tab").forEach(t=>{
+  t.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+    $("panel-"+t.dataset.tab).classList.add("active");
+    window.scrollTo({top:0,behavior:"smooth"});
+  });
+});
+/* ---- Theme ---- */
+$("themeBtn").addEventListener("click",()=>{
+  document.body.classList.toggle("dark");
+  try{localStorage.setItem("hcm-theme",document.body.classList.contains("dark")?"d":"l");}catch(e){}
+});
+try{if(localStorage.getItem("hcm-theme")==="d")document.body.classList.add("dark");}catch(e){}
+
+/* ---- Quiz ---- */
+let qChap=0, qWrongOnly=false, qOrder=[], qDone=new Set(), qRight=new Set(), qWrong=new Set(), qPick=new Map();
+function chapCount(c){return QUIZ.reduce((n,q,i)=>(q.c===c?(n+1):n),0);}
+function qLabel(idx){
+  const q=QUIZ[idx];
+  const n=QUIZ.slice(0,idx).filter(x=>x.c===q.c).length+1;
+  return "Chương "+q.c+" · Câu "+n;
+}
+function buildChapChips(){
+  const box=$("chapChips");box.innerHTML="";
+  const mk=(v,label)=>{
+    const b=document.createElement("button");
+    b.className="chip"+(qChap===v?" active":"");
+    b.textContent=label;
+    b.addEventListener("click",()=>{qChap=v;qWrongOnly=false;rebuildOrder();buildChapChips();renderQuiz();});
+    box.appendChild(b);
+  };
+  mk(0,"Tất cả (100)");
+  for(let c=1;c<=7;c++)mk(c,"Chương "+c);
+}
+function rebuildOrder(){qOrder=QUIZ.map((_,i)=>i).filter(i=>qChap===0||QUIZ[i].c===qChap);}
+function resetQuiz(){
+  qDone=new Set();qRight=new Set();qWrong=new Set();qPick=new Map();
+  rebuildOrder();
+}
+/* Xao dap an ABCD khi an "Lam lai" (chong hoc vet); giu "Tat ca/Ca hai..." o cuoi */
+function shuffleOptions(){
+  QUIZ.forEach(q=>{
+    const pinned=[],rest=[];
+    q.o.forEach((opt,i)=>{(/^(t\u1ea5t c\u1ea3|c\u1ea3 hai)/i.test(opt.trim())?pinned:rest).push(i);});
+    shuffle(rest);
+    const order=rest.concat(pinned);
+    q.a=order.indexOf(q.a);
+    q.o=order.map(i=>q.o[i]);
+  });
+}
+
+/* Luu tien do lam bai tren may */
+const STORE_KEY="cs420-quiz-v1";
+function saveProgress(){
+  try{localStorage.setItem(STORE_KEY,JSON.stringify({n:QUIZ.length,done:[...qDone],right:[...qRight],wrong:[...qWrong],pick:[...qPick]}));}catch(e){}
+}
+function loadProgress(){
+  try{
+    const s=JSON.parse(localStorage.getItem(STORE_KEY)||"null");
+    if(!s||s.n!==QUIZ.length)return;
+    qDone=new Set(s.done);
+    qPick=new Map((s.pick||[]).map(([k,v])=>[+k,v]));
+    qRight=new Set();qWrong=new Set();
+    qPick.forEach((oi,idx)=>{if(qDone.has(idx)&&QUIZ[idx]){if(oi===QUIZ[idx].a)qRight.add(idx);else qWrong.add(idx);}});
+  }catch(e){}
+}
+function clearProgress(){try{localStorage.removeItem(STORE_KEY);}catch(e){}}
+function updateScore(){
+  $("scoreLine").innerHTML="Đã làm <b>"+qDone.size+"</b>/"+qOrder.length+" · Đúng <b>"+qRight.size+"</b>";
+  $("wrongCount").textContent=qWrong.size;
+}
+function renderQuiz(){
+  const list=$("quizList");list.innerHTML="";
+  const show=qWrongOnly?qOrder.filter(i=>qWrong.has(i)):qOrder;
+  if(qWrongOnly&&show.length===0){
+    list.innerHTML='<div class="card">Chưa có câu sai. Làm bài đi rồi quay lại đây ôn nhé.</div>';
+    updateScore();return;
+  }
+  show.forEach(idx=>{
+    const q=QUIZ[idx];
+    const card=document.createElement("div");card.className="card";card.id="qcard-"+idx;
+    const head=document.createElement("div");head.className="q-head";
+    head.innerHTML='<span class="q-tag">'+qLabel(idx)+'</span><span class="q-num">'+CHAP_NAMES[q.c]+"</span>";
+    const qt=document.createElement("p");qt.className="q-text";qt.textContent=q.q;
+    card.appendChild(head);card.appendChild(qt);
+    const tip=document.createElement("div");tip.className="tip";
+    tip.innerHTML="<b>Mẹo nhớ:</b> "+q.t;
+    const answered=qDone.has(idx);
+    q.o.forEach((opt,oi)=>{
+      const b=document.createElement("button");b.className="opt";
+      b.innerHTML="<b>"+LETTERS[oi]+".</b> "+opt;
+      if(answered){
+        b.disabled=true;
+        if(oi===q.a)b.classList.add("correct");
+        else if(qPick.get(idx)===oi)b.classList.add("wrong");
+      }
+      b.addEventListener("click",()=>{
+        if(qDone.has(idx))return;
+        qDone.add(idx);qPick.set(idx,oi);
+        card.querySelectorAll(".opt").forEach((ob,obi)=>{
+          ob.disabled=true;
+          if(obi===q.a)ob.classList.add("correct");
+        });
+        if(oi===q.a){qRight.add(idx);}else{b.classList.add("wrong");qWrong.add(idx);}
+        tip.classList.add("show");updateScore();saveProgress();renderQNav();
+      });
+      card.appendChild(b);
+    });
+    if(answered)tip.classList.add("show");
+    card.appendChild(tip);
+    list.appendChild(card);
+  });
+  updateScore();renderQNav();
+}
+$("shuffleBtn").addEventListener("click",()=>{shuffle(qOrder);renderQuiz();window.scrollTo({top:0,behavior:"smooth"});});
+$("wrongBtn").addEventListener("click",()=>{qWrongOnly=!qWrongOnly;$("wrongBtn").style.borderColor=qWrongOnly?"var(--accent)":"";renderQuiz();window.scrollTo({top:0,behavior:"smooth"});});
+$("resetBtn").addEventListener("click",()=>{resetQuiz();clearProgress();shuffleOptions();renderQuiz();window.scrollTo({top:0,behavior:"smooth"});});
+/* ---- Muc luc cau hoi: nhan so cau de nhay toi, hien dung/sai ---- */
+/* ---- Muc luc dong theo tab ---- */
+const NAV_TITLES={quiz:"Mục lục trắc nghiệm",flash:"Mục lục câu hỏi ngắn",essay:"Mục lục tự luận",timeline:"Mục lục timeline",keys:"Mục lục ý chính"};
+function activeTab(){const t=document.querySelector(".tab.active");return t&&t.dataset.tab?t.dataset.tab:"quiz";}
+function jumpTo(id,openAcc){
+  document.getElementById("qNavOverlay").classList.remove("open");
+  const el=document.getElementById(id);if(!el)return;
+  if(openAcc)el.classList.add("open");
+  el.scrollIntoView({behavior:"smooth",block:"center"});
+  el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),1300);
+}
+function navNumBtn(nav,label,title,target,cls){
+  const b=document.createElement("button");
+  b.className="qn"+(cls?" "+cls:"");b.textContent=label;if(title)b.title=title;
+  b.addEventListener("click",()=>jumpTo(target));nav.appendChild(b);
+}
+function renderQNav(){
+  const nav=document.getElementById("qNav");if(!nav)return;nav.innerHTML="";
+  const tab=activeTab();
+  document.getElementById("qNavTitle").textContent=NAV_TITLES[tab]||"Mục lục";
+  if(tab==="quiz"){
+    qOrder.forEach((idx,n)=>{navNumBtn(nav,n+1,"Di toi cau "+(n+1),"qcard-"+idx,qRight.has(idx)?"ok":qWrong.has(idx)?"bad":"");});
+  }else if(tab==="flash"){
+    fOrder.forEach((idx,n)=>{navNumBtn(nav,n+1,(FLASH[idx].c?"Chuong "+FLASH[idx].c+" - ":"")+"Cau "+(n+1),"fcard-"+n);});
+  }else if(tab==="essay"){
+    ESSAYS.forEach((e,i)=>{
+      const b=document.createElement("button");b.className="qnl";b.textContent=(i+1)+". "+e.t;
+      b.addEventListener("click",()=>jumpTo("essay-"+i,true));nav.appendChild(b);
+    });
+  }else if(tab==="timeline"&&typeof TL_RAW!=="undefined"){
+    TL_RAW.forEach((it,i)=>{navNumBtn(nav,i+1,String(it[0]),"tl-"+i);});
+  }else if(tab==="keys"){
+    document.querySelectorAll("#panel-keys h3").forEach(h=>{
+      if(!h.id)return;
+      const b=document.createElement("button");b.className="qnl";b.textContent=h.textContent;
+      b.addEventListener("click",()=>jumpTo(h.id));nav.appendChild(b);
+    });
+  }
+}
+const qNavFab=document.getElementById("qNavFab"),qNavOverlay=document.getElementById("qNavOverlay");
+qNavFab.addEventListener("click",()=>{renderQNav();qNavOverlay.classList.add("open");});
+document.getElementById("qNavClose").addEventListener("click",()=>qNavOverlay.classList.remove("open"));
+qNavOverlay.addEventListener("click",e=>{if(e.target===qNavOverlay)qNavOverlay.classList.remove("open");});
+/* ---- Nut len dau trang ---- */
+const toTopBtn=document.getElementById("toTop");
+window.addEventListener("scroll",()=>{toTopBtn.classList.toggle("show",window.scrollY>400);},{passive:true});
+toTopBtn.addEventListener("click",()=>{window.scrollTo({top:0,behavior:"smooth"});});
+
+/* ---- Câu hỏi ngắn: đáp án hiện ngay bên dưới ---- */
+let fOrder=[];
+function renderFlashList(){
+  const list=$("flashList");list.innerHTML="";
+  fOrder.forEach((idx,n)=>{
+    const f=FLASH[idx];
+    const d=document.createElement("div");d.className="card";d.id="fcard-"+n;
+    d.innerHTML='<div class="q-head"><span class="q-tag">Câu '+(n+1)+'</span>'
+      +(f.c?'<span class="q-num">Chương '+f.c+'</span>':'')
+      +'</div><p class="q-text">'+f.q+'</p>'
+      +'<div class="tip show"><b>Trả lời:</b> '+f.a+'</div>';
+    list.appendChild(d);
+  });
+}
+$("fcShuffle").addEventListener("click",()=>{shuffle(fOrder);renderFlashList();window.scrollTo({top:0,behavior:"smooth"});});
+
+/* ---- Essays ---- */
+function renderEssays(){
+  const box=$("essayList");box.innerHTML="";
+  ESSAYS.forEach((e,i)=>{
+    const d=document.createElement("div");d.className="acc";d.id="essay-"+i;
+    d.innerHTML='<div class="acc-head"><span>'+e.t+'</span><span>＋</span></div><div class="acc-body">'+e.h+'</div>';
+    d.querySelector(".acc-head").addEventListener("click",()=>{
+      d.classList.toggle("open");
+      d.querySelector(".acc-head span:last-child").textContent=d.classList.contains("open")?"－":"＋";
+    });
+    box.appendChild(d);
+  });
+}
+
+
+function copyCode(btn){
+  const code = btn.closest('.codewrap').querySelector('code').innerText;
+  navigator.clipboard.writeText(code).then(()=>{
+    const old = btn.textContent;
+    btn.textContent = 'Đã copy';
+    setTimeout(()=>btn.textContent = old, 1500);
+  });
+}
+
+/* ---- Init ---- */
+loadProgress();buildChapChips();rebuildOrder();renderQuiz();
+fOrder=FLASH.map((_,i)=>i);renderFlashList();
+renderEssays();
+</script>
+</body>
+</html>
