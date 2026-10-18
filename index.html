@@ -15,22 +15,25 @@ body.dark{
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
-.wrap{max-width:860px;margin:0 auto;padding:16px 14px 80px}
-header.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
-h1{font-family:"Times New Roman",Times,serif;font-weight:700;font-size:2rem;margin:.4em 0;color:var(--accent)}
-.sub{color:var(--muted);font-size:.92rem;margin:0 0 18px}
+.wrap{max-width:880px;margin:0 auto;padding:28px 16px 80px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px}
+h1{font-family:"Times New Roman",Times,serif;font-weight:700;font-size:2.2rem;margin:0;color:var(--accent)}
+.sub{color:var(--muted);font-size:.95rem;margin:6px 0 22px}
 .theme-btn{background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer;font-size:.9rem;box-shadow:var(--shadow)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.card{display:block;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--ac);border-radius:14px;padding:16px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow);transition:transform .15s}
-.card:hover{transform:translateY(-3px)}
-.code{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.5px;color:var(--ac);background:color-mix(in srgb,var(--ac) 12%,transparent);border-radius:999px;padding:3px 10px;margin-bottom:8px}
-.card h2{font-family:"Times New Roman",Times,serif;font-weight:700;font-size:1.3rem;margin:0 0 4px}
-.meta{font-size:.85rem;color:var(--muted);margin:0 0 12px}
-.prog{height:8px;border-radius:99px;background:color-mix(in srgb,var(--ac) 15%,transparent);overflow:hidden;margin-bottom:6px}
-.prog i{display:block;height:100%;width:0;background:var(--ac);border-radius:99px;transition:width .4s}
-.ptext{font-size:.82rem;color:var(--muted);margin:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-top:4px solid var(--ac);border-radius:12px;padding:18px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.1)}
+.code{align-self:flex-start;font-size:.75rem;font-weight:700;letter-spacing:.6px;color:var(--ac);background:color-mix(in srgb,var(--ac) 10%,transparent);border-radius:6px;padding:3px 10px;margin-bottom:10px}
+.card h2{font-family:"Times New Roman",Times,serif;font-weight:700;font-size:1.35rem;margin:0 0 6px;line-height:1.35}
+.meta{font-size:.86rem;color:var(--muted);margin:0 0 14px}
+.prog{margin-top:auto}
+.prow{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.ptext{font-size:.84rem;color:var(--muted);margin:0}
 .ptext b{color:var(--ac)}
-.note{margin-top:26px;font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+.pct{font-size:.84rem;font-weight:700;color:var(--ac)}
+.bar{height:8px;border-radius:99px;background:color-mix(in srgb,var(--ac) 14%,transparent);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ac);border-radius:99px;transition:width .4s}
+.note{margin-top:30px;font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
 </style>
 </head>
 <body>
@@ -39,17 +42,17 @@ h1{font-family:"Times New Roman",Times,serif;font-weight:700;font-size:2rem;marg
     <h1>Ôn tập</h1>
     <button class="theme-btn" id="themeBtn" title="Đổi giao diện sáng/tối">Sáng / Tối</button>
   </header>
-  <p class="sub">5 môn &middot; chọn môn để bắt đầu ôn. Tiến độ mỗi môn được lưu riêng trên máy này.</p>
+  <p class="sub">5 môn &middot; 334 câu trắc nghiệm &middot; chọn môn để bắt đầu ôn. Tiến độ mỗi môn được lưu riêng trên máy này.</p>
   <div class="grid" id="grid"></div>
   <p class="note">Nhắc nhỏ: đáp án được tra cứu và đối chiếu từ nhiều nguồn, dù đã rà soát kỹ vẫn có thể còn sai sót. Khi ôn thi, bạn nên đối chiếu thêm với giáo trình và đáp án của giảng viên.</p>
 </div>
 <script>
 const SUBJECTS=[
- {code:"HIS362",name:"Lịch sử Đảng Cộng sản Việt Nam", href:"his362/",    ac:"#b91c1c", key:"lsd-quiz-v1",  stats:"45 trắc nghiệm · 30 câu hỏi ngắn · 5 dàn ý tự luận · 31 mốc timeline"},
- {code:"POS361",name:"Tư tưởng Hồ Chí Minh",            href:"pos361/", ac:"#c2410c", key:"hcm-quiz-v1",  stats:"90 trắc nghiệm · 40 câu hỏi ngắn · 5 dàn ý tự luận"},
- {code:"POS351",name:"Chủ nghĩa xã hội khoa học",       href:"pos351/", ac:"#15803d", key:"cnxh-quiz-v1", stats:"105 trắc nghiệm · 30 câu hỏi ngắn · 5 dàn ý tự luận"},
- {code:"CS434",name:"Công cụ & Phương pháp Thiết kế - Quản lý (Phần mềm)", href:"cs434/", ac:"#7c3aed", key:"cs434-quiz-v1", stats:"74 trắc nghiệm · 12 câu trả lời ngắn"},
- {code:"CS420",name:"Hệ Phân tán",                     href:"cs420/",  ac:"#1d4ed8", key:"cs420-quiz-v1", stats:"100 trắc nghiệm · 9 bài thực hành"}
+ {code:"HIS362",name:"Lịch sử Đảng Cộng sản Việt Nam",href:"his362/",ac:"#b91c1c",key:"lsd-quiz-v1", stats:"45 trắc nghiệm · 30 câu hỏi ngắn · 5 dàn ý tự luận · 31 mốc timeline"},
+ {code:"POS361",name:"Tư tưởng Hồ Chí Minh",href:"pos361/",ac:"#c2410c",key:"hcm-quiz-v1", stats:"90 trắc nghiệm · 40 câu hỏi ngắn · 5 dàn ý tự luận"},
+ {code:"POS351",name:"Chủ nghĩa xã hội khoa học",href:"pos351/",ac:"#15803d",key:"cnxh-quiz-v1",stats:"105 trắc nghiệm · 30 câu hỏi ngắn · 5 dàn ý tự luận"},
+ {code:"CS434",name:"Công cụ & Phương pháp Thiết kế - Quản lý (Phần mềm)",href:"cs434/",ac:"#7c3aed",key:"cs434-quiz-v1",stats:"74 trắc nghiệm · 12 câu trả lời ngắn"},
+ {code:"CS420",name:"Hệ Phân tán",href:"cs420/",ac:"#1d4ed8",key:"cs420-quiz-v1",stats:"100 trắc nghiệm · 9 bài thực hành"}
 ];
 const grid=document.getElementById("grid");
 SUBJECTS.forEach(s=>{
@@ -63,8 +66,8 @@ SUBJECTS.forEach(s=>{
   el.className="card"; el.href=s.href; el.style.setProperty("--ac",s.ac);
   el.innerHTML='<span class="code">'+s.code+'</span><h2>'+s.name+'</h2>'
     +'<p class="meta">'+s.stats+'</p>'
-    +'<div class="prog"><i style="width:'+pct+'%"></i></div>'
-    +'<p class="ptext">Đã làm <b>'+done+'</b>/'+total+' trắc nghiệm</p>';
+    +'<div class="prog"><div class="prow"><p class="ptext">Đã làm <b>'+done+'</b>/'+total+'</p><span class="pct">'+pct+'%</span></div>'
+    +'<div class="bar"><i style="width:'+pct+'%"></i></div></div>';
   grid.appendChild(el);
 });
 const btn=document.getElementById("themeBtn");
