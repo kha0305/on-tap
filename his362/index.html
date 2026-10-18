@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ôn tập Lịch sử Đảng Cộng sản Việt Nam</title>
+<style>
+:root{
+  --bg:#f4f1ea; --card:#ffffff; --ink:#1f2937; --muted:#6b7280;
+  --accent:#b91c1c; --accent-soft:#fee2e2; --gold:#b45309;
+  --ok:#15803d; --ok-soft:#dcfce7; --bad:#b91c1c; --bad-soft:#fee2e2;
+  --line:#e5e0d5; --shadow:0 2px 10px rgba(0,0,0,.07);
+}
+body.dark{
+  --bg:#141210; --card:#1f1c18; --ink:#e9e2d6; --muted:#a8a094;
+  --accent:#f87171; --accent-soft:#3b1d1d; --gold:#fbbf24;
+  --ok:#4ade80; --ok-soft:#14331f; --bad:#f87171; --bad-soft:#3b1d1d;
+  --line:#38322a; --shadow:0 2px 10px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
+.wrap{max-width:860px;margin:0 auto;padding:16px 14px 80px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+h1{font-size:1.45rem;margin:.4em 0;color:var(--accent)}
+.sub{color:var(--muted);font-size:.92rem;margin:0 0 12px}
+.theme-btn{background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer;font-size:.9rem;box-shadow:var(--shadow)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:5}
+.tab{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 16px;cursor:pointer;font-size:.93rem}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0;box-shadow:var(--shadow)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:.85rem}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.q-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.q-tag{font-size:.78rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.q-num{font-size:.82rem;color:var(--muted)}
+.q-text{font-weight:600;margin:0 0 10px;font-size:1.02rem}
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px 12px;margin:7px 0;cursor:pointer;font-size:.95rem;transition:background .15s}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default;opacity:.95}
+.opt.correct{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:600}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.tip{display:none;background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:10px 12px;margin-top:10px;font-size:.9rem}
+.tip.show{display:block}
+.tip b{color:var(--accent)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:999px;padding:9px 18px;cursor:pointer;font-size:.9rem}
+.btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.score{font-size:.92rem;color:var(--muted)}
+.score b{color:var(--accent)}
+/* muc luc cau hoi + nut len dau trang */
+#qNavFab{position:fixed;right:16px;bottom:74px;width:46px;height:46px;border-radius:50%;background:var(--card);color:var(--ink);border:1px solid var(--line);font-size:20px;line-height:1;cursor:pointer;box-shadow:var(--shadow);z-index:60}
+#qNavOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:80;padding:16px}
+#qNavOverlay.open{display:flex}
+#qNavPopup{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);max-width:430px;width:100%;max-height:72vh;display:flex;flex-direction:column}
+.qnav-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line)}
+#qNavClose{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:15px;line-height:1}
+#qNav{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:8px;padding:14px;overflow-y:auto}
+.qn{padding:8px 0;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-weight:700;cursor:pointer;font-size:.85rem}
+.qn.ok{background:#16a34a;border-color:#16a34a;color:#fff}
+.qn.bad{background:#dc2626;border-color:#dc2626;color:#fff}
+.qnl{grid-column:1/-1;display:block;width:100%;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer;font-size:.9rem}
+.card.flash{outline:2px solid var(--accent);outline-offset:2px}
+#toTop{position:fixed;right:16px;bottom:16px;width:46px;height:46px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:22px;line-height:1;cursor:pointer;box-shadow:var(--shadow);display:none;z-index:60}
+#toTop.show{display:block}
+.acc{border:1px solid var(--line);border-radius:14px;margin:12px 0;background:var(--card);box-shadow:var(--shadow);overflow:hidden}
+.acc-head{padding:15px 16px;cursor:pointer;font-weight:700;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.acc-head:hover{background:var(--accent-soft)}
+.acc-body{display:none;padding:4px 18px 18px}
+.acc.open .acc-body{display:block}
+.acc-body h4{color:var(--accent);margin:14px 0 6px;font-size:.98rem}
+.acc-body ul{margin:6px 0;padding-left:20px}
+.acc-body li{margin:5px 0;font-size:.94rem}
+.kw{background:var(--accent-soft);border-radius:6px;padding:1px 7px;font-size:.88em;color:var(--accent);font-weight:600;white-space:nowrap}
+.tl{position:relative;margin:14px 0 14px 8px;padding-left:22px;border-left:3px solid var(--accent)}
+.tl-item{margin:0 0 16px;position:relative}
+.tl-item::before{content:"";position:absolute;left:-30px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+.tl-year{font-weight:800;color:var(--accent)}
+.formula{background:var(--card);border:1px dashed var(--accent);border-radius:12px;padding:12px 14px;margin:10px 0;font-size:.95rem}
+.formula b{color:var(--accent)}
+.card h3{color:var(--accent);margin:14px 0 8px;font-size:1.02rem}
+.card h3:first-child{margin-top:0}
+.card ul{margin:6px 0;padding-left:20px}
+.card li{margin:6px 0;font-size:.94rem}
+footer.note{margin-top:26px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);padding-top:14px}
+@media(max-width:640px){
+  .wrap{padding:12px 10px 60px}
+  h1{font-size:1.15rem}
+  .sub{font-size:.84rem}
+  header.top{align-items:flex-start}
+  .theme-btn{padding:7px 12px;font-size:.8rem;flex:0 0 auto}
+  .tabs{flex-wrap:nowrap;overflow-x:auto;gap:6px;padding:8px 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;padding:8px 13px;font-size:.84rem}
+  .chips{gap:6px}
+  .chip{padding:6px 11px;font-size:.8rem}
+  .toolbar{gap:6px}
+  .btn{padding:8px 14px;font-size:.84rem}
+  .score{font-size:.84rem;width:100%}
+  .card{padding:13px 12px}
+  .q-text{font-size:.97rem}
+  .q-head{flex-wrap:wrap;gap:4px}
+  .q-num{font-size:.74rem}
+  .opt{padding:9px 10px;font-size:.9rem}
+  .tip{font-size:.86rem}
+  .acc-head{padding:13px 14px;font-size:.94rem}
+  .tl{margin-left:4px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div>
+    <h1>Ôn tập Lịch sử Đảng Cộng sản Việt Nam</h1>
+    <p class="sub">45 trắc nghiệm &middot; 30 câu hỏi ngắn &middot; 5 dàn ý tự luận &middot; timeline 31 mốc &middot; ý chính bắt buộc thuộc</p>
+    <p style="margin:0 0 12px"><a href="../" style="color:var(--accent);font-size:.9rem">&larr; Trang chủ</a> &middot; <a href="../pos361/" style="color:var(--accent);font-size:.9rem">Tư tưởng Hồ Chí Minh</a> &middot; <a href="../pos351/" style="color:var(--accent);font-size:.9rem">CNXH khoa học</a> &middot; <a href="../cs420/" style="color:var(--accent);font-size:.9rem">Hệ Phân tán – CS420</a> &middot; <a href="../cs434/" style="color:var(--accent);font-size:.9rem">CS434</a></p>
+  </div>
+  <button class="theme-btn" id="themeBtn" title="Đổi giao diện sáng/tối">Sáng / Tối</button>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="quiz">Trắc nghiệm (45)</button>
+  <button class="tab" data-tab="flash">Câu hỏi ngắn (30)</button>
+  <button class="tab" data-tab="essay">Tự luận (5)</button>
+  <button class="tab" data-tab="timeline">Timeline (31)</button>
+  <button class="tab" data-tab="keys">Ý chính</button>
+</nav>
+
+<!-- ============ QUIZ ============ -->
+<section class="panel active" id="panel-quiz">
+  <div class="chips" id="chapChips"></div>
+  <div class="toolbar">
+    <button class="btn ghost" id="shuffleBtn">Xáo trộn</button>
+    <button class="btn ghost" id="wrongBtn">Chỉ ôn câu sai (<span id="wrongCount">0</span>)</button>
+    <button class="btn ghost" id="resetBtn">Làm lại</button>
+    <span class="score" id="scoreLine">Đã làm <b>0</b>/45 &middot; Đúng <b>0</b></span>
+  </div>
+  <p class="sub">Nhắc nhỏ: đáp án được tra cứu và đối chiếu từ nhiều nguồn trên mạng, dù đã rà soát kỹ vẫn có thể còn sai sót. Khi ôn thi, bạn nên đối chiếu thêm với giáo trình và đáp án của giảng viên.</p>
+  <div id="quizList"></div>
+</section>
+
+<!-- ============ CÂU HỎI NGẮN ============ -->
+<section class="panel" id="panel-flash">
+  <div class="toolbar">
+    <button class="btn ghost" id="fcShuffle">Xáo trộn thứ tự</button>
+    <span class="score">Đáp án hiện ngay bên dưới mỗi câu hỏi</span>
+  </div>
+  <div id="flashList"></div>
+</section>
+
+<!-- ============ ESSAY ============ -->
+<section class="panel" id="panel-essay">
+  <p class="sub">Chạm vào từng đề để mở dàn ý từ khóa. Đoạn <b>liên hệ bản thân / sinh viên</b> dùng chung cho cả 5 đề.</p>
+  <div id="essayList"></div>
+</section>
+
+<!-- ============ TIMELINE ============ -->
+<section class="panel" id="panel-timeline">
+  <div class="card">
+    <h3 style="margin-top:0">Dòng thời gian 1925 – 2016</h3>
+    <div class="tl" id="tlList"></div>
+  </div>
+</section>
+
+<!-- ============ KEY POINTS ============ -->
+<section class="panel" id="panel-keys">
+  <div class="card">
+    <h3 id="keysec-0">A. Số phải thuộc lòng</h3>
+    <ul>
+      <li><b>3/2/1930</b>: thành lập Đảng &middot; <b>10/1930</b>: Luận cương chính trị</li>
+      <li><b>22/12/1944</b>: thành lập quân đội &middot; <b>19/12/1946</b>: Toàn quốc kháng chiến</li>
+      <li><b>2/9/1945</b>: Tuyên ngôn Độc lập &middot; <b>3/9/1945</b>: diệt 3 giặc</li>
+      <li><b>2/1951</b>: Đại hội II &middot; <b>9/1960</b>: Đại hội III &middot; <b>20/12/1960</b>: MTDTGPMN</li>
+      <li><b>27/1/1973</b>: Hiệp định Paris &middot; <b>30/4/1975</b>: toàn thắng</li>
+      <li><b>1976</b>: ĐH IV (toàn thắng, 2 nhiệm vụ) &middot; <b>1986</b>: ĐH VI (đổi mới)</li>
+      <li><b>1991</b>: ĐH VII (Cương lĩnh 91) &middot; <b>2006</b>: ĐH X (đảng viên làm KTTN)</li>
+      <li><b>2011</b>: ĐH XI (Cương lĩnh 2011, 3 đột phá) &middot; <b>2016</b>: ĐH XII (hội nhập KT trọng tâm)</li>
+    </ul>
+    <h3 id="keysec-1">B. Người – việc</h3>
+    <ul>
+      <li><b>Nguyễn Ái Quốc</b>: chủ trì Hội nghị thành lập Đảng + soạn Cương lĩnh chính trị đầu tiên</li>
+      <li><b>Trần Phú</b>: soạn Luận cương 10/1930 + Tổng Bí thư đầu tiên</li>
+      <li><b>Trường Chinh</b>: Đề cương văn hóa 1943 + "Kháng chiến nhất định thắng lợi" (1947)</li>
+      <li><b>Hồ Chí Minh</b>: Tuyên ngôn 2/9 + Lời kêu gọi 19/12/1946 + Chủ tịch Ủy ban dân tộc giải phóng</li>
+      <li><b>Phạm Văn Đồng</b>: trưởng đoàn Giơnevơ &middot; <b>Nguyễn Hữu Thọ</b>: Chủ tịch MTDTGPMN &middot; <b>Nguyễn Văn Tố</b>: Chủ tịch Ban Thường trực QH khóa I</li>
+    </ul>
+    <h3 id="keysec-2">C. Cụm từ khóa (thấy là nhận ra đáp án)</h3>
+    <ul>
+      <li><i>"điều kiện cốt yếu"</i> &rarr; vai trò lãnh đạo của Đảng (Luận cương 1930)</li>
+      <li><i>"đi tới xã hội cộng sản"</i> &rarr; Cương lĩnh chính trị (Nguyễn Ái Quốc)</li>
+      <li><i>"nhân tố hàng đầu"</i> &rarr; vai trò Đảng trong kháng chiến chống Mỹ</li>
+      <li><i>"toàn dân, toàn diện, lâu dài, dựa vào sức mình là chính"</i> &rarr; đường lối kháng chiến chống Pháp</li>
+      <li><i>"sức dân, tài dân, lực dân"</i> &rarr; kháng chiến toàn dân</li>
+      <li><i>"Nam Bắc nhất định sum họp một nhà"</i> &rarr; Đại hội III</li>
+      <li><i>"Dân giàu, nước mạnh, dân chủ, công bằng, văn minh"</i> &rarr; mục tiêu KTTT / đặc trưng CNXH</li>
+      <li><i>"vừa hợp tác vừa đấu tranh"</i> &rarr; nguyên tắc đối ngoại</li>
+      <li><i>"động lực quan trọng"</i> &rarr; vai trò kinh tế tư nhân</li>
+      <li><i>"trọng tâm là con người"</i> &rarr; xây dựng văn hóa</li>
+    </ul>
+    <h3 id="keysec-3">D. Công thức đếm số lượng</h3>
+    <ul>
+      <li><b>Số 3</b>: 3 tổ chức cộng sản (1929) &middot; 3 giặc &middot; 3 văn kiện kháng chiến &middot; 3 lực lượng vũ trang &middot; 3 đột phá &middot; 3 nguyên tắc văn hóa &middot; 3 yếu tố ra đời Đảng &middot; 3 thắng lợi vĩ đại</li>
+      <li><b>Số 4</b>: 4 nhiệm vụ "Kháng chiến, kiến quốc" &middot; 4 thành phần kinh tế</li>
+      <li><b>Số 5</b>: 5 yếu tố tăng trưởng (quyết định: <b>con người</b>) &middot; 5 bài học đổi mới &middot; 5 mặt thành tựu đổi mới</li>
+      <li><b>Số 2</b>: 2 nhiệm vụ chiến lược &middot; 2 chiến lược kháng chiến chống Mỹ &middot; 2 đặc trưng Cương lĩnh 2011</li>
+      <li><b>12</b> ngày đêm (ĐBP trên không) &middot; <b>55</b> ngày đêm (tổng tiến công 1975)</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 id="keysec-4">E. 12 cặp dễ nhầm (đề hay gài bẫy ở đây)</h3>
+    <ul>
+      <li><b>Nguyễn Ái Quốc vs Trần Phú</b>: NAQ = chủ trì Hội nghị thành lập Đảng + soạn Cương lĩnh; Trần Phú = soạn Luận cương 10/1930 + Tổng Bí thư đầu tiên.</li>
+      <li><b>Cương lĩnh vs Luận cương</b>: Cương lĩnh (NAQ): <i>"đi tới xã hội cộng sản"</i>; Luận cương (Trần Phú): <i>"điều kiện cốt yếu"</i>.</li>
+      <li><b>Hội nghị 6/1–7/2/1930 vs ngày thành lập Đảng 3/2/1930</b>: hội nghị họp dài, lấy 3/2 làm mốc.</li>
+      <li><b>22/12/1944</b> (quân đội) <b>vs 19/12/1946</b> (kháng chiến): cách nhau đúng 2 năm, đều tháng 12.</li>
+      <li><b>3 giặc</b> (3/9/1945) <b>vs 4 nhiệm vụ</b> Kháng chiến, kiến quốc (25/11/1945).</li>
+      <li><b>Mở màn 1975 = Tây Nguyên</b> (Phước Long chỉ là trận đầu 1/1975).</li>
+      <li><b>Điện Biên Phủ trên không</b>: thực tế 18–29/12/1972; trong đề chọn <b>A (18–30/12)</b>.</li>
+      <li><b>26/4</b> (chiến dịch HCM bắt đầu) <b>vs 30/4</b> (toàn thắng).</li>
+      <li><b>Các Đại hội</b>: IV = toàn thắng + 2 nhiệm vụ; VI = đổi mới; VII = Cương lĩnh 1991; X = đảng viên làm KTTN; XI = Cương lĩnh 2011 + 3 đột phá; XII = hội nhập KT trọng tâm.</li>
+      <li><b>"điều kiện cốt yếu"</b> (Luận cương 1930) <b>vs "nhân tố hàng đầu"</b> (Đảng trong kháng chiến chống Mỹ).</li>
+      <li><b>Quốc dân Đại hội</b> (16/8/1945, Tân Trào) <b>vs Quốc hội khóa I</b> (2/3/1946).</li>
+      <li><b>3 văn kiện kháng chiến chống Pháp</b> là một cụm — đừng nhầm <i>Kháng chiến nhất định thắng lợi</i> (1947) là văn kiện duy nhất.</li>
+    </ul>
+  </div>
+  <footer class="note">Hai câu cần nhớ kỹ: <b>Câu 2</b> (phương pháp nghiên cứu &rarr; đáp án C, gồm 4 phương pháp) và <b>Câu 26</b> (thực tế "Điện Biên Phủ trên không" 18–29/12/1972 nhưng trong đề chọn <b>A: 18–30/12/1972</b>).</footer>
+</section>
+</div>
+
+<button id="toTop" title="Lên đầu trang" aria-label="Lên đầu trang">↑</button>
+<button id="qNavFab" title="Mục lục câu hỏi" aria-label="Mục lục câu hỏi">☰</button>
+<div id="qNavOverlay"><div id="qNavPopup" role="dialog" aria-label="Mục lục câu hỏi"><div class="qnav-head"><b id="qNavTitle">Mục lục</b><button id="qNavClose" aria-label="Đóng">✕</button></div><div id="qNav"></div></div></div>
+<script>
+"use strict";
+var FC_RAW = [
+ [
+  "Câu 61. Đối tượng nghiên cứu của khoa học Lịch sử Đảng?",
+  "Sự ra đời, phát triển và hoạt động lãnh đạo của Đảng qua các thời kỳ lịch sử."
+ ],
+ [
+  "Câu 62. Hội nghị thành lập Đảng: thời gian, địa điểm, thành phần?",
+  "6/1–7/2/1930, tại Cửu Long (Hồng Kông). 2 đại biểu Đông Dương Cộng sản Đảng (Trịnh Đình Cửu, Nguyễn Đức Cảnh) + 2 đại biểu An Nam Cộng sản Đảng (Châu Văn Liêm, Nguyễn Thiệu). Nguyễn Ái Quốc chủ trì."
+ ],
+ [
+  "Câu 63. Cương lĩnh chính trị: nhiệm vụ chủ yếu trước mắt?",
+  "Đánh đổ đế quốc chủ nghĩa Pháp và bọn phong kiến, làm cho nước Nam được hoàn toàn độc lập."
+ ],
+ [
+  "Câu 64. Cương lĩnh: lực lượng cách mạng?",
+  "Công nhân, nông dân là lực lượng cơ bản, giai cấp công nhân lãnh đạo; đoàn kết mọi giai cấp, lực lượng tiến bộ, yêu nước."
+ ],
+ [
+  "Câu 65. Quy luật ra đời của Đảng Cộng sản Việt Nam?",
+  "Sự kết hợp 3 yếu tố: Chủ nghĩa Mác-Lênin + phong trào công nhân + phong trào yêu nước."
+ ],
+ [
+  "Câu 66. Luận cương 10/1930 xác định vai trò lãnh đạo của Đảng?",
+  "Sự lãnh đạo của Đảng là điều kiện cốt yếu cho thắng lợi của cách mạng."
+ ],
+ [
+  "Câu 67. Chuyển hướng chiến lược 1939–1945: nhiệm vụ trung tâm?",
+  "Xúc tiến chuẩn bị khởi nghĩa vũ trang."
+ ],
+ [
+  "Câu 68. Ý nghĩa chủ trương chuyển hướng chiến lược 1939–1945?",
+  "Là ngọn cờ dẫn đường cho nhân dân tiến lên đánh Pháp, đuổi Nhật, giành độc lập cho dân tộc và tự do cho nhân dân."
+ ],
+ [
+  "Câu 69. Đề cương văn hóa 1943 (Trường Chinh): 3 nguyên tắc?",
+  "Dân tộc hóa – Khoa học hóa – Đại chúng hóa."
+ ],
+ [
+  "Câu 70. Ý nghĩa Tuyên ngôn Độc lập 2/9/1945?",
+  "Tuyên bố sự ra đời của nước Việt Nam Dân chủ Cộng hòa; khẳng định quyền độc lập, tự do của dân tộc và ý chí bảo vệ nền độc lập."
+ ],
+ [
+  "Câu 71. 3/9/1945: nhiệm vụ văn hóa?",
+  "Chống nạn mù chữ và giáo dục lại tinh thần nhân dân."
+ ],
+ [
+  "Câu 72. Chỉ thị Kháng chiến, kiến quốc: 4 nhiệm vụ?",
+  "Củng cố chính quyền cách mạng; chống thực dân Pháp xâm lược; bài trừ nội phản; cải thiện đời sống nhân dân."
+ ],
+ [
+  "Câu 73. Đại hội II: thời gian, địa điểm?",
+  "11–19/2/1951, tại xã Vinh Quang (nay là Kim Bình), tỉnh Tuyên Quang."
+ ],
+ [
+  "Câu 74. Thế nào là kháng chiến toàn dân?",
+  "Đem toàn bộ sức dân, tài dân, lực dân; động viên toàn dân tích cực tham gia kháng chiến."
+ ],
+ [
+  "Câu 75. Ý nghĩa Hội nghị Giơnevơ 1954?",
+  "Mở ra trang sử mới cho dân tộc; mở đường cho đấu tranh giành độc lập, thống nhất hoàn toàn của nhân dân 3 nước Đông Dương."
+ ],
+ [
+  "Câu 76. Trưởng đoàn Việt Nam tại Hội nghị Giơnevơ?",
+  "Phạm Văn Đồng."
+ ],
+ [
+  "Câu 77. Đường lối kháng chiến chống Pháp?",
+  "Toàn dân, toàn diện, lâu dài, dựa vào sức mình là chính."
+ ],
+ [
+  "Câu 78. Đại hội III (9/1960): triển vọng kháng chiến chống Mỹ?",
+  "Thắng lợi cuối cùng nhất định thuộc về nhân dân ta, Nam Bắc nhất định sum họp một nhà."
+ ],
+ [
+  "Câu 79. 15/2/1961: tên gọi thống nhất lực lượng vũ trang miền Nam?",
+  "Quân giải phóng miền Nam Việt Nam."
+ ],
+ [
+  "Câu 80. Tổng tiến công 1975 diễn ra khi nào?",
+  "55 ngày đêm, từ 10/3 đến 30/4/1975."
+ ],
+ [
+  "Câu 81. Mục tiêu kinh tế thị trường định hướng xã hội chủ nghĩa?",
+  "Dân giàu, nước mạnh, dân chủ, công bằng, văn minh."
+ ],
+ [
+  "Câu 82. 5 yếu tố tăng trưởng? Yếu tố quyết định?",
+  "Vốn; khoa học và công nghệ; con người; cơ cấu kinh tế; thể chế chính trị và quản lý nhà nước. Quyết định: con người."
+ ],
+ [
+  "Câu 83. Đối tác trong đối ngoại hiện nay (Hội nghị Trung ương 8 khóa XI)?",
+  "Những ai tôn trọng độc lập, chủ quyền, thiết lập và mở rộng quan hệ hữu nghị, hợp tác, bình đẳng, cùng có lợi với Việt Nam."
+ ],
+ [
+  "Câu 84. Mục tiêu tổng quát của đổi mới?",
+  "Xây dựng thành công chủ nghĩa xã hội và bảo vệ vững chắc Tổ quốc Việt Nam xã hội chủ nghĩa."
+ ],
+ [
+  "Câu 85. Đại hội VII (1991) thông qua văn kiện nào?",
+  "Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên chủ nghĩa xã hội (1991)."
+ ],
+ [
+  "Câu 86. Cương lĩnh 2011 bổ sung đặc trưng mới nào?",
+  "2 đặc trưng: Dân giàu, nước mạnh, dân chủ, công bằng, văn minh + Nhà nước pháp quyền xã hội chủ nghĩa của nhân dân, do nhân dân, vì nhân dân."
+ ],
+ [
+  "Câu 87. 4 thành phần kinh tế (Đại hội XII)?",
+  "Kinh tế nhà nước; kinh tế tập thể; kinh tế tư nhân; kinh tế có vốn đầu tư nước ngoài."
+ ],
+ [
+  "Câu 88. Động lực công nghiệp hóa, hiện đại hóa (Đại hội XII)?",
+  "Khoa học, công nghệ, tri thức và nguồn nhân lực chất lượng cao."
+ ],
+ [
+  "Câu 89. Quan hệ hội nhập kinh tế với các lĩnh vực khác (Đại hội XII)?",
+  "Hội nhập kinh tế là trọng tâm; hội nhập các lĩnh vực khác phải tạo thuận lợi cho hội nhập kinh tế."
+ ],
+ [
+  "Câu 90. 3 thắng lợi vĩ đại từ 1930 đến nay?",
+  "cách mạng Tháng Tám 1945; kháng chiến giải phóng dân tộc và bảo vệ Tổ quốc (chống Pháp, chống Mỹ); sự nghiệp đổi mới."
+ ]
+];;
+
+var QZ_RAW = [
+ {
+  "q": "Câu 1. Nhiệm vụ của khoa học Lịch sử Đảng Cộng sản Việt Nam?",
+  "o": [
+   "Trình bày có hệ thống Cương lĩnh, đường lối của Đảng",
+   "Tái hiện tiến trình lịch sử lãnh đạo, đấu tranh của Đảng",
+   "Tổng kết lịch sử của Đảng",
+   "Tất cả các phương án đều đúng"
+  ],
+  "a": 3,
+  "c": 1,
+  "tip": "3 nhiệm vụ gộp 1: trình bày – tái hiện – tổng kết."
+ },
+ {
+  "q": "Câu 2. Phương pháp nghiên cứu môn Lịch sử Đảng gồm những phương pháp nào?",
+  "o": [
+   "phương pháp lịch sử; phương pháp lôgic",
+   "phương pháp lịch sử; phương pháp lôgic; phương pháp tổng kết thực tiễn lịch sử",
+   "phương pháp lịch sử; phương pháp lôgic; phương pháp tổng kết thực tiễn lịch sử; phương pháp so sánh",
+   "phương pháp lôgic; phương pháp tổng kết thực tiễn lịch sử; phương pháp so sánh"
+  ],
+  "a": 2,
+  "c": 1,
+  "tip": "Nhớ 4 chữ: Sử – Logic – Tổng kết – So sánh."
+ },
+ {
+  "q": "Câu 3. Chức năng của khoa học Lịch sử Đảng Cộng sản Việt Nam?",
+  "o": [
+   "Nhận thức; giáo dục; dự báo và phê phán",
+   "Nhận thức; giáo dục",
+   "Giáo dục; dự báo và phê phán",
+   "Nhận thức; dự báo và phê phán"
+  ],
+  "a": 0,
+  "c": 1,
+  "tip": "3 chức năng: nhận thức – giáo dục – dự báo và phê phán. Đáp án A gộp đủ cả 3."
+ },
+ {
+  "q": "Câu 4. Năm 1929 ở Việt Nam đã xuất hiện các tổ chức cộng sản nào?",
+  "o": [
+   "Đông Dương Cộng sản Đảng",
+   "An Nam Cộng sản Đảng",
+   "Đông Dương Cộng sản Liên đoàn",
+   "Tất cả các phương án đều đúng"
+  ],
+  "a": 3,
+  "c": 1,
+  "tip": "Năm 1929 có 3 tổ chức cộng sản ra đời: Đông Dương Cộng sản Đảng (tháng 6), An Nam Cộng sản Đảng (tháng 8), Đông Dương Cộng sản Liên đoàn (tháng 9)."
+ },
+ {
+  "q": "Câu 5. Hội nghị thành lập Đảng năm 1930 do ai chủ trì?",
+  "o": [
+   "Nguyễn Đức Cảnh",
+   "Trịnh Đình Cửu",
+   "Nguyễn Ái Quốc",
+   "Trần Phú"
+  ],
+  "a": 2,
+  "c": 1,
+  "tip": "Người sáng lập thì chủ trì."
+ },
+ {
+  "q": "Câu 6. Đảng Cộng sản Việt Nam thành lập ngày, tháng, năm nào?",
+  "o": [
+   "3/2/1930",
+   "6/2/1930",
+   "24/2/1930",
+   "7/3/1930"
+  ],
+  "a": 0,
+  "c": 1,
+  "tip": "Hội nghị hợp nhất họp tại Cửu Long (Hương Cảng, Trung Quốc); lấy ngày 3/2/1930 làm ngày thành lập Đảng."
+ },
+ {
+  "q": "Câu 7. Cương lĩnh chính trị đầu tiên xác định phương hướng chiến lược là gì?",
+  "o": [
+   "Tư sản dân quyền cách mạng và thổ địa cách mạng để đi tới xã hội cộng sản",
+   "Tư sản dân quyền cách mạng và thổ địa cách mạng",
+   "Thổ địa cách mạng",
+   "Tư sản dân quyền"
+  ],
+  "a": 0,
+  "c": 1,
+  "tip": "Thấy cụm đi tới xã hội cộng sản là Cương lĩnh."
+ },
+ {
+  "q": "Câu 8. Ai là Tổng Bí thư đầu tiên của Đảng?",
+  "o": [
+   "Trịnh Đình Cửu",
+   "Trần Phú",
+   "Lê Hồng Phong",
+   "Hà Huy Tập"
+  ],
+  "a": 1,
+  "c": 1,
+  "tip": "Trần Phú = Luận cương + Tổng Bí thư đầu tiên."
+ },
+ {
+  "q": "Câu 9. Khi nào phong trào công nhân Việt Nam hoàn toàn trở thành phong trào tự giác?",
+  "o": [
+   "1920 (Công hội Sài Gòn)",
+   "1925 (bãi công Ba Son)",
+   "1929 (3 tổ chức cộng sản)",
+   "1930 (Đảng ra đời)"
+  ],
+  "a": 3,
+  "c": 1,
+  "tip": "Phân biệt: bãi công Ba Son (8/1925) chỉ là bước đầu chuyển sang tự giác; phong trào hoàn toàn tự giác khi Đảng ra đời (1930)."
+ },
+ {
+  "q": "Câu 10. Luận cương chính trị tháng 10/1930 do ai soạn thảo?",
+  "o": [
+   "Trần Phú",
+   "Nguyễn Ái Quốc",
+   "Trịnh Đình Cửu",
+   "Nguyễn Đức Cảnh"
+  ],
+  "a": 0,
+  "c": 1,
+  "tip": "Nhớ cặp: Nguyễn Ái Quốc – Cương lĩnh; Trần Phú – Luận cương + Tổng Bí thư đầu tiên."
+ },
+ {
+  "q": "Câu 11. Vai trò lãnh đạo của Đảng trong Luận cương 10/1930 được xác định thế nào?",
+  "o": [
+   "Sự lãnh đạo của Đảng là điều kiện cốt yếu cho thắng lợi của cách mạng Việt Nam",
+   "Làm cách mạng tư sản dân quyền và thổ địa cách mạng",
+   "Đoàn kết rộng rãi các tầng lớp nhân dân",
+   "Đánh đuổi thực dân Pháp xâm lược"
+  ],
+  "a": 0,
+  "c": 1,
+  "tip": "Cụm từ khóa: điều kiện cốt yếu."
+ },
+ {
+  "q": "Câu 12. Chương trình hành động 6/1932 của Đảng Cộng sản Đông Dương gồm nội dung nào?",
+  "o": [
+   "Đòi các quyền tự do tổ chức, xuất bản, ngôn luận, đi lại...",
+   "Bỏ thuế thân, thuế ngụ cư và các thứ thuế vô lý",
+   "Bỏ độc quyền về rượu, muối, thuốc phiện",
+   "Tất cả các phương án đều đúng"
+  ],
+  "a": 3,
+  "c": 1,
+  "tip": "3 nhóm: tự do – thuế – độc quyền."
+ },
+ {
+  "q": "Câu 13. Quốc dân Đại hội 16/8/1945 tại Tân Trào quyết định những vấn đề gì?",
+  "o": [
+   "Tán thành tổng khởi nghĩa và 10 chính sách của Việt Minh",
+   "Đặt tên nước Việt Nam Dân chủ Cộng hòa, quốc kỳ, quốc ca",
+   "Lập Ủy ban dân tộc giải phóng (Hồ Chí Minh chủ tịch)",
+   "Tất cả các phương án đều đúng"
+  ],
+  "a": 3,
+  "c": 1,
+  "tip": "16/8/1945 Tân Trào: tán thành tổng khởi nghĩa + 10 chính sách Việt Minh + lập Ủy ban dân tộc giải phóng."
+ },
+ {
+  "q": "Câu 14. Ủy ban dân tộc giải phóng do ai làm chủ tịch?",
+  "o": [
+   "Hồ Chí Minh",
+   "Phạm Văn Đồng",
+   "Võ Nguyên Giáp",
+   "Trường Chinh"
+  ],
+  "a": 0,
+  "c": 1,
+  "tip": "Hồ Chí Minh làm Chủ tịch Ủy ban dân tộc giải phóng."
+ },
+ {
+  "q": "Câu 15. Việt Nam Tuyên truyền giải phóng quân thành lập ngày nào?",
+  "o": [
+   "19/12/1944",
+   "20/12/1944",
+   "21/12/1944",
+   "22/12/1944"
+  ],
+  "a": 3,
+  "c": 1,
+  "tip": "22/12/1944: Đội Việt Nam Tuyên truyền Giải phóng quân thành lập tại Cao Bằng (34 chiến sĩ)."
+ },
+ {
+  "q": "Câu 16. Chỉ thị Kháng chiến, kiến quốc (25/11/1945): ai là kẻ thù chính?",
+  "o": [
+   "Phát xít Nhật",
+   "Quân đội Tưởng Giới Thạch",
+   "Thực dân Pháp xâm lược",
+   "Thực dân Anh"
+  ],
+  "a": 2,
+  "c": 2,
+  "tip": "25-11: Pháp là thù chính."
+ },
+ {
+  "q": "Câu 17. Lời kêu gọi Toàn quốc kháng chiến viết ngày nào?",
+  "o": [
+   "18/12/1946",
+   "19/12/1946",
+   "20/12/1946",
+   "21/12/1946"
+  ],
+  "a": 1,
+  "c": 2,
+  "tip": "Tối 19/12/1946, Hồ Chí Minh ra Lời kêu gọi toàn quốc kháng chiến, mở đầu kháng chiến chống Pháp."
+ },
+ {
+  "q": "Câu 18. Đường lối kháng chiến (1945–1954) thể hiện tập trung trong văn kiện nào?",
+  "o": [
+   "Toàn dân kháng chiến (12/12/1946)",
+   "Lời kêu gọi toàn quốc kháng chiến (19/12/1946)",
+   "Kháng chiến nhất định thắng lợi (1947)",
+   "Tất cả các phương án đều đúng"
+  ],
+  "a": 3,
+  "c": 2,
+  "tip": "Đường lối kháng chiến = cả 3 văn kiện: Toàn dân kháng chiến + Lời kêu gọi 19/12/1946 + Kháng chiến nhất định thắng lợi."
+ },
+ {
+  "q": "Câu 19. 3/9/1945, Chính phủ lâm thời xác định nhiệm vụ lớn trước mắt nào?",
+  "o": [
+   "Diệt giặc đói",
+   "Diệt giặc dốt",
+   "Diệt giặc ngoại xâm",
+   "Tất cả các phương án đều đúng"
+  ],
+  "a": 3,
+  "c": 2,
+  "tip": "3-9: 3 giặc."
+ },
+ {
+  "q": "Câu 20. Chủ tịch Ban Thường trực Quốc hội khóa I là ai?",
+  "o": [
+   "Trường Chinh",
+   "Phạm Văn Đồng",
+   "Huỳnh Thúc Kháng",
+   "Nguyễn Văn Tố"
+  ],
+  "a": 3,
+  "c": 2,
+  "tip": "2-3-46: Nguyễn Văn Tố."
+ },
+ {
+  "q": "Câu 21. Lực lượng vũ trang trong kháng chiến chống Pháp gồm?",
+  "o": [
+   "Bộ đội chủ lực",
+   "Bộ đội địa phương",
+   "Dân quân du kích",
+   "Tất cả các phương án đều đúng"
+  ],
+  "a": 3,
+  "c": 2,
+  "tip": "Nhớ 3 thứ quân: chủ lực + địa phương + dân quân du kích."
+ },
+ {
+  "q": "Câu 22. 9/1954, nhiệm vụ chủ yếu trước mắt của miền Bắc là gì?",
+  "o": [
+   "Hàn gắn vết thương chiến tranh, phục hồi kinh tế",
+   "Giảm tô, giảm tức và cải cách ruộng đất",
+   "Đưa miền Bắc tiến lên chủ nghĩa xã hội",
+   "Xây dựng văn hóa mới, con người mới"
+  ],
+  "a": 0,
+  "c": 2,
+  "tip": "Sau Hiệp định Giơnevơ (1954), miền Bắc: hàn gắn vết thương chiến tranh, khôi phục kinh tế quốc dân."
+ },
+ {
+  "q": "Câu 23. 9/1954, nhiệm vụ cụ thể của cách mạng miền Nam là gì?",
+  "o": [
+   "Đấu tranh đòi thi hành Hiệp định",
+   "Chuyển hướng công tác",
+   "Tập hợp mọi lực lượng dân tộc, dân chủ...",
+   "Tất cả các phương án đều đúng"
+  ],
+  "a": 3,
+  "c": 2,
+  "tip": "Miền Nam sau 1954: đấu tranh đòi thi hành Hiệp định Giơnevơ."
+ },
+ {
+  "q": "Câu 24. Chủ tịch Mặt trận Dân tộc Giải phóng miền Nam là ai?",
+  "o": [
+   "Nguyễn Thị Bình",
+   "Nguyễn Thị Định",
+   "Huỳnh Tấn Phát",
+   "Nguyễn Hữu Thọ"
+  ],
+  "a": 3,
+  "c": 2,
+  "tip": "20/12/1960: Mặt trận Dân tộc Giải phóng miền Nam thành lập; Nguyễn Hữu Thọ làm Chủ tịch."
+ },
+ {
+  "q": "Câu 25. Đại hội III họp tháng năm nào?",
+  "o": [
+   "8/1960",
+   "9/1960",
+   "10/1960",
+   "11/1960"
+  ],
+  "a": 1,
+  "c": 2,
+  "tip": "60 – Đại hội III."
+ },
+ {
+  "q": "Câu 26. Trận Điện Biên Phủ trên không diễn ra thời gian nào?",
+  "o": [
+   "18–30/12/1972",
+   "18–24/12/1972",
+   "18–26/12/1972",
+   "18–28/12/1972"
+  ],
+  "a": 0,
+  "c": 2,
+  "tip": "Thực tế Mỹ ném bom 18–29/12/1972 (12 ngày đêm), ngừng ném bom ngày 30/12; trong 4 đáp án của đề thì A gần đúng nhất."
+ },
+ {
+  "q": "Câu 27. Hiệp định Paris ký ngày nào?",
+  "o": [
+   "27/1/1973",
+   "28/1/1973",
+   "29/1/1973",
+   "30/1/1973"
+  ],
+  "a": 0,
+  "c": 2,
+  "tip": "27-1-73."
+ },
+ {
+  "q": "Câu 28. Tổng tiến công 1975 mở màn bằng chiến dịch nào?",
+  "o": [
+   "Giải phóng Phước Long",
+   "Tiến công Đà Nẵng",
+   "Tây Nguyên",
+   "Tiến công Huế"
+  ],
+  "a": 2,
+  "c": 2,
+  "tip": "Mở màn = Tây Nguyên."
+ },
+ {
+  "q": "Câu 29. Chiến dịch Hồ Chí Minh bắt đầu ngày nào?",
+  "o": [
+   "25/4/1975",
+   "26/4/1975",
+   "27/4/1975",
+   "28/4/1975"
+  ],
+  "a": 1,
+  "c": 2,
+  "tip": "26/4/1975: Chiến dịch Hồ Chí Minh bắt đầu (5 cánh quân tiến vào Sài Gòn)."
+ },
+ {
+  "q": "Câu 30. Toàn thắng mùa Xuân 1975 ngày nào?",
+  "o": [
+   "27/4/1975",
+   "28/4/1975",
+   "29/4/1975",
+   "30/4/1975"
+  ],
+  "a": 3,
+  "c": 2,
+  "tip": "11 giờ 30 phút ngày 30/4/1975: Chiến dịch Hồ Chí Minh toàn thắng, miền Nam hoàn toàn giải phóng."
+ },
+ {
+  "q": "Câu 31. Kỳ họp I Quốc hội thống nhất (24/6–3/7/1976) quyết định vấn đề gì?",
+  "o": [
+   "Tên nước, quốc kỳ, thủ đô, quốc ca, quốc huy",
+   "Sài Gòn đổi tên thành Thành phố Hồ Chí Minh",
+   "Bầu lãnh đạo và lập Ủy ban dự thảo Hiến pháp",
+   "Tất cả các phương án đều đúng"
+  ],
+  "a": 3,
+  "c": 3,
+  "tip": "1976: tên nước Cộng hòa Xã hội chủ nghĩa Việt Nam + quốc kỳ, quốc ca, thủ đô Hà Nội + đổi tên Sài Gòn thành Thành phố Hồ Chí Minh."
+ },
+ {
+  "q": "Câu 32. Đại hội nào là đại hội toàn thắng?",
+  "o": [
+   "IV",
+   "V",
+   "VI",
+   "VII"
+  ],
+  "a": 0,
+  "c": 3,
+  "tip": "Đại hội IV (12/1976) là đại hội toàn thắng sau giải phóng miền Nam, thống nhất đất nước."
+ },
+ {
+  "q": "Câu 33. Đại hội nào xác định 2 nhiệm vụ chiến lược?",
+  "o": [
+   "IV",
+   "V",
+   "VI",
+   "VII"
+  ],
+  "a": 1,
+  "c": 3,
+  "tip": "Đại hội V (3/1982) xác định 2 nhiệm vụ chiến lược: xây dựng thành công chủ nghĩa xã hội + bảo vệ vững chắc Tổ quốc Việt Nam xã hội chủ nghĩa."
+ },
+ {
+  "q": "Câu 34. Đại hội nào cho phép đảng viên làm kinh tế tư nhân?",
+  "o": [
+   "IX",
+   "X",
+   "XI",
+   "XII"
+  ],
+  "a": 1,
+  "c": 3,
+  "tip": "X – kinh tế tư nhân."
+ },
+ {
+  "q": "Câu 35. Trọng tâm xây dựng văn hóa (Hội nghị Trung ương 9 khóa XI) là gì?",
+  "o": [
+   "Lối sống mỗi người vì mọi người...",
+   "Nền văn hóa tiên tiến, đậm đà bản sắc dân tộc...",
+   "Chăm lo xây dựng con người có nhân cách, lối sống tốt đẹp",
+   "Giáo dục nghệ thuật, thẩm mỹ cho nhân dân"
+  ],
+  "a": 2,
+  "c": 3,
+  "tip": "Trọng tâm là con người."
+ },
+ {
+  "q": "Câu 36. Văn hóa tiên tiến là gì?",
+  "o": [
+   "Yêu nước và tiến bộ; lý tưởng độc lập dân tộc và chủ nghĩa xã hội",
+   "Giá trị văn hóa truyền thống bền vững",
+   "Lòng nhân ái, khoan dung",
+   "Cần cù, sáng tạo"
+  ],
+  "a": 0,
+  "c": 3,
+  "tip": "Tiên tiến = yêu nước + tiến bộ."
+ },
+ {
+  "q": "Câu 37. Vai trò đội ngũ trí thức (Hội nghị Trung ương 9 khóa XI)?",
+  "o": [
+   "Cùng công nhân, nông dân: vai trò quan trọng, là nền tảng... dưới sự lãnh đạo của Đảng",
+   "Tham gia xây dựng văn hóa",
+   "Đi đầu trong xây dựng văn hóa, con người",
+   "Góp phần giáo dục nhân cách, lối sống"
+  ],
+  "a": 0,
+  "c": 3,
+  "tip": "Trí thức: vai trò quan trọng."
+ },
+ {
+  "q": "Câu 38. Nguyên tắc đối ngoại (Hội nghị Trung ương 8 khóa XI)?",
+  "o": [
+   "Nắm vững hai mặt hợp tác và đấu tranh",
+   "Tôn trọng độc lập chủ quyền...",
+   "Thúc đẩy hợp tác, cân bằng lợi ích",
+   "Chủ động hội nhập; là bạn, đối tác tin cậy..."
+  ],
+  "a": 0,
+  "c": 3,
+  "tip": "Vừa hợp tác vừa đấu tranh."
+ },
+ {
+  "q": "Câu 39. 3 đột phá chiến lược (Đại hội XI) gồm?",
+  "o": [
+   "Hoàn thiện thể chế kinh tế thị trường định hướng xã hội chủ nghĩa...",
+   "Phát triển nguồn nhân lực, nhất là chất lượng cao...",
+   "Xây dựng kết cấu hạ tầng đồng bộ...",
+   "Tất cả các phương án đều đúng"
+  ],
+  "a": 3,
+  "c": 3,
+  "tip": "Thể chế – Nhân lực – Hạ tầng."
+ },
+ {
+  "q": "Câu 40. Động lực công nghiệp hóa, hiện đại hóa (Đại hội XII)?",
+  "o": [
+   "Nguồn nhân lực chất lượng cao",
+   "Khoa học và công nghệ",
+   "khoa học và công nghệ, tri thức và nguồn nhân lực chất lượng cao",
+   "Nguồn lực tài chính"
+  ],
+  "a": 2,
+  "c": 3,
+  "tip": "Chọn đáp án đầy đủ nhất: khoa học và công nghệ + tri thức + nguồn nhân lực chất lượng cao."
+ },
+ {
+  "q": "Câu 41. Mục đích kinh tế thị trường định hướng xã hội chủ nghĩa (Đại hội XII)?",
+  "o": [
+   "Giải phóng mọi tiềm năng các thành phần kinh tế",
+   "Thực hiện dân giàu, nước mạnh, dân chủ, công bằng, văn minh...",
+   "Phát huy vai trò làm chủ của nhân dân...",
+   "Phát huy vai trò làm chủ của nhân dân"
+  ],
+  "a": 1,
+  "c": 3,
+  "tip": "Mục đích: dân giàu, nước mạnh, dân chủ, công bằng, văn minh."
+ },
+ {
+  "q": "Câu 42. Vai trò kinh tế tư nhân (Hội nghị Trung ương 5 khóa XII)?",
+  "o": [
+   "Động lực quan trọng của nền kinh tế",
+   "Điều tiết nền kinh tế...",
+   "Giữ vai trò chủ đạo...",
+   "Là lực lượng vật chất quan trọng..."
+  ],
+  "a": 0,
+  "c": 3,
+  "tip": "Hội nghị Trung ương 5 khóa XII: kinh tế tư nhân là động lực quan trọng của nền kinh tế."
+ },
+ {
+  "q": "Câu 43. Chủ trương Bảo đảm lợi ích tối cao của quốc gia – dân tộc... do Đại hội nào?",
+  "o": [
+   "XII",
+   "XI",
+   "X",
+   "IX"
+  ],
+  "a": 0,
+  "c": 3,
+  "tip": "Đại hội XII: bảo đảm lợi ích tối cao của quốc gia – dân tộc."
+ },
+ {
+  "q": "Câu 44. Cấu trúc hệ thống chính trị gồm?",
+  "o": [
+   "Đảng Cộng sản Việt Nam",
+   "Nhà nước",
+   "Mặt trận Tổ quốc và các đoàn thể chính trị – xã hội",
+   "Tất cả đều đúng"
+  ],
+  "a": 3,
+  "c": 3,
+  "tip": "Hệ thống chính trị có 3 bộ phận: Đảng lãnh đạo, Nhà nước quản lý, Mặt trận Tổ quốc và các đoàn thể chính trị – xã hội."
+ },
+ {
+  "q": "Câu 45. Đại hội XII: hội nhập lấy lĩnh vực nào làm trọng tâm?",
+  "o": [
+   "Chính trị",
+   "Kinh tế",
+   "Văn hóa, xã hội",
+   "Quốc phòng, an ninh"
+  ],
+  "a": 1,
+  "c": 3,
+  "tip": "Hội nhập: kinh tế trọng tâm."
+ }
+];;
+
+var TL_RAW = [
+["1925","Bãi công Ba Son → phong trào công nhân chuyển sang tự giác."],
+["1929","Ra đời 3 tổ chức cộng sản: Đông Dương CSD, An Nam CSD, Đông Dương CS Liên đoàn."],
+["6/1–7/2/1930","Hội nghị thành lập Đảng tại Cửu Long (Hồng Kông), Nguyễn Ái Quốc chủ trì. Lấy 3/2/1930 làm ngày thành lập."],
+["10/1930","Luận cương chính trị (Trần Phú): lãnh đạo của Đảng là điều kiện cốt yếu."],
+["6/1932","Chương trình hành động của Đảng Cộng sản Đông Dương."],
+["1943","Đề cương văn hóa VN (Trường Chinh): Dân tộc hóa – Khoa học hóa – Đại chúng hóa."],
+["22/12/1944","Việt Nam Tuyên truyền Giải phóng quân thành lập."],
+["16/8/1945","Quốc dân Đại hội Tân Trào: tán thành tổng khởi nghĩa, đặt tên nước, lập Ủy ban dân tộc giải phóng."],
+["2/9/1945","Tuyên ngôn Độc lập – khai sinh nước VNDCCH."],
+["3/9/1945","Chính phủ lâm thời: diệt 3 giặc (đói, dốt, ngoại xâm)."],
+["25/11/1945","Chỉ thị Kháng chiến, kiến quốc: kẻ thù chính là thực dân Pháp."],
+["2/3/1946","Quốc hội khóa I họp phiên đầu tiên; Nguyễn Văn Tố chủ tịch Ban Thường trực."],
+["19/12/1946","Lời kêu gọi Toàn quốc kháng chiến."],
+["1947","Trường Chinh viết Kháng chiến nhất định thắng lợi."],
+["11–19/2/1951","Đại hội II tại Vinh Quang (Kim Bình), Tuyên Quang."],
+["8/5/1954","Hội nghị Giơnevơ bàn về Đông Dương; Phạm Văn Đồng trưởng đoàn VN."],
+["9/1954","Miền Bắc hàn gắn vết thương chiến tranh; miền Nam đấu tranh đòi thi hành Hiệp định."],
+["9/1960","Đại hội III: Nam Bắc nhất định sum họp một nhà."],
+["20/12/1960","MTDTGPMN thành lập tại Tân Lập (Tây Ninh); Nguyễn Hữu Thọ chủ tịch."],
+["15/2/1961","Quân giải phóng miền Nam Việt Nam."],
+["18–29/12/1972","Điện Biên Phủ trên không – 12 ngày đêm."],
+["27/1/1973","Hiệp định Paris."],
+["10/3–30/4/1975","Tổng tiến công và nổi dậy: 55 ngày đêm, mở màn chiến dịch Tây Nguyên."],
+["26/4/1975","Chiến dịch Hồ Chí Minh bắt đầu → 30/4 toàn thắng."],
+["24/6–3/7/1976","Quốc hội thống nhất: tên nước CHXHCNVN, cờ đỏ sao vàng, thủ đô Hà Nội, TP.HCM."],
+["1976","Đại hội IV – đại hội toàn thắng; 2 nhiệm vụ chiến lược."],
+["1986","Đại hội VI – đổi mới toàn diện."],
+["1991","Đại hội VII – Cương lĩnh 1991."],
+["2006","Đại hội X – đảng viên được làm kinh tế tư nhân."],
+["2011","Đại hội XI – Cương lĩnh 2011; 3 đột phá chiến lược."],
+["2016","Đại hội XII – hội nhập kinh tế là trọng tâm."]
+]
+/* Chuẩn hoá dữ liệu */
+const QUIZ = QZ_RAW.map(x=>({c:x.c, q:x.q, o:x.o, a:x.a, t:x.tip}));
+const FLASH = FC_RAW.map(x=>({q:x[0], a:x[1]}));
+
+/* ============ DÀN Ý TỰ LUẬN ============ */
+const LIEN_HE = "Từ những bài học trên, với tư cách sinh viên, em nhận thức sâu sắc trách nhiệm của mình: <b>một là</b>, ra sức học tập, rèn luyện, trau dồi tri thức và bản lĩnh chính trị, làm chủ khoa học – công nghệ để đáp ứng yêu cầu hội nhập; <b>hai là</b>, sống có lý tưởng, giữ gìn đạo đức, lối sống lành mạnh, nói không với các tệ nạn xã hội; <b>ba là</b>, tích cực tham gia các phong trào tình nguyện, hoạt động xã hội, góp sức xây dựng quê hương, đất nước; <b>bốn là</b>, kiên quyết đấu tranh với các luận điệu sai trái, thù địch, bảo vệ nền tảng tư tưởng của Đảng và thành quả cách mạng; <b>năm là</b>, chủ động hội nhập quốc tế nhưng luôn giữ gìn bản sắc văn hóa dân tộc, đặt lợi ích quốc gia – dân tộc lên hàng đầu.";
+const ESSAYS = [
+ {
+  "t": "Câu 91. Ý nghĩa lịch sử của Cách mạng Tháng Tám 1945 + liên hệ bản thân",
+  "h": "<h4>Ý nghĩa lịch sử (4 ý — mẹo: \"Đập tan – Kỷ nguyên – Sụp đổ thuộc địa – Lý luận\")</h4>\n<ul>\n<li><b>Đập tan</b> ách thống trị thực dân, phát xít, phong kiến &rarr; lập nước <span class=\"kw\">Việt Nam Dân chủ Cộng hòa</span>, nhà nước dân chủ nhân dân đầu tiên ở Đông Nam Á.</li>\n<li>Mở ra <b>kỷ nguyên độc lập, tự do</b>; nhân dân từ thân phận nô lệ thành người làm chủ đất nước.</li>\n<li>Đánh sập một mảng hệ thống thuộc địa của thực dân cũ; thắng lợi to lớn của phong trào giải phóng dân tộc ở nước thuộc địa.</li>\n<li>Phong phú thêm lý luận <b>Mác – Lênin về cách mạng giải phóng dân tộc</b>.</li>\n</ul>\n<h4>Liên hệ bản thân</h4>\n<ul><li>Phát huy tinh thần yêu nước, ý chí tự lực tự cường; ra sức học tập, rèn luyện để bảo vệ vững chắc độc lập, chủ quyền của Tổ quốc. Từ những bài học trên, với tư cách sinh viên, em nhận thức sâu sắc trách nhiệm của mình: <b>một là</b>, ra sức học tập, rèn luyện, trau dồi tri thức và bản lĩnh chính trị, làm chủ khoa học – công nghệ để đáp ứng yêu cầu hội nhập; <b>hai là</b>, sống có lý tưởng, giữ gìn đạo đức, lối sống lành mạnh, nói không với các tệ nạn xã hội; <b>ba là</b>, tích cực tham gia các phong trào tình nguyện, hoạt động xã hội, góp sức xây dựng quê hương, đất nước; <b>bốn là</b>, kiên quyết đấu tranh với các luận điệu sai trái, thù địch, bảo vệ nền tảng tư tưởng của Đảng và thành quả cách mạng; <b>năm là</b>, chủ động hội nhập quốc tế nhưng luôn giữ gìn bản sắc văn hóa dân tộc, đặt lợi ích quốc gia – dân tộc lên hàng đầu.</li></ul>"
+ },
+ {
+  "t": "Câu 92. Vai trò lãnh đạo của Đảng trong kháng chiến chống Mỹ + liên hệ sinh viên",
+  "h": "<h4>Vai trò lãnh đạo (5 ý)</h4>\n<ul>\n<li><b>Đường lối đúng đắn</b>: 2 chiến lược (miền Bắc: cách mạng xã hội chủ nghĩa; miền Nam: cách mạng dân tộc dân chủ nhân dân); mục tiêu giải phóng miền Nam, thống nhất đất nước.</li>\n<li><b>Đại đoàn kết toàn dân tộc</b>: tập hợp lực lượng yêu nước; kết hợp hậu phương miền Bắc với tiền tuyến miền Nam.</li>\n<li><b>Kết hợp các hình thức đấu tranh</b>: chính trị + quân sự + ngoại giao; đánh bại các chiến lược chiến tranh của Mỹ.</li>\n<li><b>Kết hợp sức mạnh dân tộc với sức mạnh thời đại</b>: tranh thủ các nước xã hội chủ nghĩa và lực lượng tiến bộ thế giới.</li>\n<li><b>Kết luận</b>: sự lãnh đạo của Đảng là <span class=\"kw\">nhân tố hàng đầu</span> quyết định thắng lợi &rarr; đỉnh cao <b>Đại thắng mùa Xuân 1975</b>.</li>\n</ul>\n<h4>Liên hệ sinh viên</h4>\n<ul><li>Từ những bài học trên, với tư cách sinh viên, em nhận thức sâu sắc trách nhiệm của mình: <b>một là</b>, ra sức học tập, rèn luyện, trau dồi tri thức và bản lĩnh chính trị, làm chủ khoa học – công nghệ để đáp ứng yêu cầu hội nhập; <b>hai là</b>, sống có lý tưởng, giữ gìn đạo đức, lối sống lành mạnh, nói không với các tệ nạn xã hội; <b>ba là</b>, tích cực tham gia các phong trào tình nguyện, hoạt động xã hội, góp sức xây dựng quê hương, đất nước; <b>bốn là</b>, kiên quyết đấu tranh với các luận điệu sai trái, thù địch, bảo vệ nền tảng tư tưởng của Đảng và thành quả cách mạng; <b>năm là</b>, chủ động hội nhập quốc tế nhưng luôn giữ gìn bản sắc văn hóa dân tộc, đặt lợi ích quốc gia – dân tộc lên hàng đầu.</li></ul>"
+ },
+ {
+  "t": "Câu 93. Đường lối đối ngoại, hội nhập thời kỳ đổi mới + liên hệ sinh viên",
+  "h": "<h4>Nội dung (5 ý — mẹo: \"Độc lập – Đa dạng – Hội nhập – Kết hợp – Vị thế\")</h4>\n<ul>\n<li>Kiên định đối ngoại <b>độc lập, tự chủ, hòa bình, hữu nghị, hợp tác, phát triển</b>; lợi ích quốc gia – dân tộc cao nhất.</li>\n<li><b>Đa phương hóa, đa dạng hóa</b> quan hệ; tạo môi trường hòa bình, ổn định.</li>\n<li><b>Hội nhập quốc tế toàn diện, sâu rộng</b>; hội nhập <span class=\"kw\">kinh tế là trọng tâm</span>.</li>\n<li>Kết hợp <b>sức mạnh dân tộc với sức mạnh thời đại</b>.</li>\n<li>Nâng cao <b>vị thế, uy tín</b> quốc tế; giữ vững độc lập, chủ quyền, toàn vẹn lãnh thổ.</li>\n</ul>\n<h4>Liên hệ sinh viên</h4>\n<ul><li>Chủ động hội nhập quốc tế (ngoại ngữ, kỹ năng, giao lưu) nhưng luôn giữ gìn bản sắc văn hóa dân tộc. Từ những bài học trên, với tư cách sinh viên, em nhận thức sâu sắc trách nhiệm của mình: <b>một là</b>, ra sức học tập, rèn luyện, trau dồi tri thức và bản lĩnh chính trị, làm chủ khoa học – công nghệ để đáp ứng yêu cầu hội nhập; <b>hai là</b>, sống có lý tưởng, giữ gìn đạo đức, lối sống lành mạnh, nói không với các tệ nạn xã hội; <b>ba là</b>, tích cực tham gia các phong trào tình nguyện, hoạt động xã hội, góp sức xây dựng quê hương, đất nước; <b>bốn là</b>, kiên quyết đấu tranh với các luận điệu sai trái, thù địch, bảo vệ nền tảng tư tưởng của Đảng và thành quả cách mạng; <b>năm là</b>, chủ động hội nhập quốc tế nhưng luôn giữ gìn bản sắc văn hóa dân tộc, đặt lợi ích quốc gia – dân tộc lên hàng đầu.</li></ul>"
+ },
+ {
+  "t": "Câu 94. Đường lối đổi mới toàn diện (Đại hội VI, 1986) + bài học kinh nghiệm",
+  "h": "<h4>Nội dung đổi mới (5 ý — mẹo: \"Tư duy – Kinh tế – Đối ngoại – Nhà nước – Đảng\")</h4>\n<ul>\n<li><b>Đổi mới tư duy lý luận</b> về chủ nghĩa xã hội và thời kỳ quá độ.</li>\n<li><b>Đổi mới kinh tế</b>: thừa nhận kinh tế nhiều thành phần; 3 chương trình kinh tế lớn (lương thực – thực phẩm, hàng tiêu dùng, hàng xuất khẩu); xóa cơ chế tập trung quan liêu, bao cấp.</li>\n<li><b>Đổi mới đối ngoại, kinh tế đối ngoại</b>: mở rộng quan hệ, thu hút đầu tư nước ngoài.</li>\n<li><b>Đổi mới vai trò Nhà nước</b>: phân biệt quản lý nhà nước với sản xuất – kinh doanh; kết hợp quản lý theo ngành và theo địa phương.</li>\n<li><b>Đổi mới phương thức lãnh đạo của Đảng</b>: nâng cao năng lực lãnh đạo, chống tiêu cực.</li>\n</ul>\n<h4>Bài học kinh nghiệm (5 ý — mẹo: \"Kiên định – Thực tiễn – Lấy dân – Kết hợp – Xây dựng Đảng\")</h4>\n<ul>\n<li>Kiên định mục tiêu độc lập dân tộc + chủ nghĩa xã hội; vận dụng sáng tạo Mác – Lênin, tư tưởng Hồ Chí Minh.</li>\n<li>Xuất phát từ thực tiễn, tôn trọng quy luật khách quan.</li>\n<li><span class=\"kw\">Lấy dân làm gốc</span>, phát huy đại đoàn kết toàn dân tộc.</li>\n<li>Kết hợp sức mạnh dân tộc + thời đại; chủ động hội nhập.</li>\n<li>Xây dựng Đảng và hệ thống chính trị trong sạch, vững mạnh.</li>\n</ul>"
+ },
+ {
+  "t": "Câu 95. Thành tựu đổi mới (1986–2021) + liên hệ sinh viên",
+  "h": "<h4>Thành tựu (5 mặt — mẹo: \"Kinh tế – Chính trị – Văn hóa – Đảng – Đối ngoại\")</h4>\n<ul>\n<li><b>Kinh tế</b>: ra khỏi khủng hoảng; tăng trưởng khá; kinh tế thị trường định hướng xã hội chủ nghĩa từng bước hình thành.</li>\n<li><b>Chính trị – xã hội, quốc phòng – an ninh</b>: ổn định chính trị; tăng cường quốc phòng – an ninh; phát huy dân chủ xã hội chủ nghĩa; củng cố đại đoàn kết.</li>\n<li><b>Văn hóa – xã hội</b>: nhiều thành tựu; đời sống vật chất, tinh thần của nhân dân cải thiện.</li>\n<li><b>Xây dựng Đảng, hệ thống chính trị</b>: đẩy mạnh xây dựng Đảng, Nhà nước pháp quyền xã hội chủ nghĩa; bảo vệ độc lập, chủ quyền, toàn vẹn lãnh thổ.</li>\n<li><b>Đối ngoại</b>: mở rộng, đi vào chiều sâu; vị thế, uy tín Việt Nam nâng cao.</li>\n</ul>\n<h4>Liên hệ sinh viên</h4>\n<ul><li>Từ những bài học trên, với tư cách sinh viên, em nhận thức sâu sắc trách nhiệm của mình: <b>một là</b>, ra sức học tập, rèn luyện, trau dồi tri thức và bản lĩnh chính trị, làm chủ khoa học – công nghệ để đáp ứng yêu cầu hội nhập; <b>hai là</b>, sống có lý tưởng, giữ gìn đạo đức, lối sống lành mạnh, nói không với các tệ nạn xã hội; <b>ba là</b>, tích cực tham gia các phong trào tình nguyện, hoạt động xã hội, góp sức xây dựng quê hương, đất nước; <b>bốn là</b>, kiên quyết đấu tranh với các luận điệu sai trái, thù địch, bảo vệ nền tảng tư tưởng của Đảng và thành quả cách mạng; <b>năm là</b>, chủ động hội nhập quốc tế nhưng luôn giữ gìn bản sắc văn hóa dân tộc, đặt lợi ích quốc gia – dân tộc lên hàng đầu.</li></ul>"
+ }
+];;
+
+/* ============ LOGIC ỨNG DỤNG ============ */
+const CHAP_NAMES = {
+  1:"Chương I – Đảng ra đời, lãnh đạo cách mạng",
+  2:"Chương II – Kháng chiến chống Pháp và chống Mỹ",
+  3:"Chương III – Xây dựng, đổi mới đất nước"
+};
+const ROMAN = {1:"I", 2:"II", 3:"III"};
+const LETTERS = ["A","B","C","D"];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function $(id){return document.getElementById(id);}
+
+/* ---- Tabs ---- */
+document.querySelectorAll(".tab").forEach(t=>{
+  t.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+    $("panel-"+t.dataset.tab).classList.add("active");
+    window.scrollTo({top:0,behavior:"smooth"});
+  });
+});
+/* ---- Theme ---- */
+$("themeBtn").addEventListener("click",()=>{
+  document.body.classList.toggle("dark");
+  try{localStorage.setItem("lsd-theme",document.body.classList.contains("dark")?"d":"l");}catch(e){}
+});
+try{if(localStorage.getItem("lsd-theme")==="d")document.body.classList.add("dark");}catch(e){}
+
+/* ---- Quiz ---- */
+let qChap=0, qWrongOnly=false, qOrder=[], qDone=new Set(), qRight=new Set(), qWrong=new Set(), qPick=new Map();
+function qLabel(idx){
+  const q=QUIZ[idx];
+  const n=QUIZ.slice(0,idx).filter(x=>x.c===q.c).length+1;
+  return "Chương "+ROMAN[q.c]+" · Câu "+n;
+}
+function buildChapChips(){
+  const box=$("chapChips");box.innerHTML="";
+  const mk=(v,label)=>{
+    const b=document.createElement("button");
+    b.className="chip"+(qChap===v?" active":"");
+    b.textContent=label;
+    b.addEventListener("click",()=>{qChap=v;qWrongOnly=false;rebuildOrder();buildChapChips();renderQuiz();});
+    box.appendChild(b);
+  };
+  mk(0,"Tất cả (45)");
+  for(let c=1;c<=3;c++)mk(c,"Chương "+ROMAN[c]);
+}
+function rebuildOrder(){qOrder=QUIZ.map((_,i)=>i).filter(i=>qChap===0||QUIZ[i].c===qChap);}
+function resetQuiz(){
+  qDone=new Set();qRight=new Set();qWrong=new Set();qPick=new Map();
+  rebuildOrder();
+}
+/* Xao dap an ABCD khi an "Lam lai" (chong hoc vet); giu "Tat ca/Ca hai..." o cuoi */
+function shuffleOptions(){
+  QUIZ.forEach(q=>{
+    const pinned=[],rest=[];
+    q.o.forEach((opt,i)=>{(/^(t\u1ea5t c\u1ea3|c\u1ea3 hai)/i.test(opt.trim())?pinned:rest).push(i);});
+    shuffle(rest);
+    const order=rest.concat(pinned);
+    q.a=order.indexOf(q.a);
+    q.o=order.map(i=>q.o[i]);
+  });
+}
+
+/* Luu tien do lam bai tren may */
+const STORE_KEY="lsd-quiz-v1";
+function saveProgress(){
+  try{localStorage.setItem(STORE_KEY,JSON.stringify({n:QUIZ.length,done:[...qDone],right:[...qRight],wrong:[...qWrong],pick:[...qPick]}));}catch(e){}
+}
+function loadProgress(){
+  try{
+    const s=JSON.parse(localStorage.getItem(STORE_KEY)||"null");
+    if(!s||s.n!==QUIZ.length)return;
+    qDone=new Set(s.done);
+    qPick=new Map((s.pick||[]).map(([k,v])=>[+k,v]));
+    qRight=new Set();qWrong=new Set();
+    qPick.forEach((oi,idx)=>{if(qDone.has(idx)&&QUIZ[idx]){if(oi===QUIZ[idx].a)qRight.add(idx);else qWrong.add(idx);}});
+  }catch(e){}
+}
+function clearProgress(){try{localStorage.removeItem(STORE_KEY);}catch(e){}}
+function updateScore(){
+  $("scoreLine").innerHTML="Đã làm <b>"+qDone.size+"</b>/"+qOrder.length+" · Đúng <b>"+qRight.size+"</b>";
+  $("wrongCount").textContent=qWrong.size;
+}
+function renderQuiz(){
+  const list=$("quizList");list.innerHTML="";
+  const show=qWrongOnly?qOrder.filter(i=>qWrong.has(i)):qOrder;
+  if(qWrongOnly&&show.length===0){
+    list.innerHTML='<div class="card">Chưa có câu sai. Làm bài đi rồi quay lại đây ôn nhé.</div>';
+    updateScore();return;
+  }
+  show.forEach(idx=>{
+    const q=QUIZ[idx];
+    const card=document.createElement("div");card.className="card";card.id="qcard-"+idx;
+    const head=document.createElement("div");head.className="q-head";
+    head.innerHTML='<span class="q-tag">'+qLabel(idx)+'</span><span class="q-num">'+CHAP_NAMES[q.c]+"</span>";
+    const qt=document.createElement("p");qt.className="q-text";qt.textContent=q.q;
+    card.appendChild(head);card.appendChild(qt);
+    const tip=document.createElement("div");tip.className="tip";
+    tip.innerHTML="<b>Mẹo nhớ:</b> "+q.t;
+    const answered=qDone.has(idx);
+    q.o.forEach((opt,oi)=>{
+      const b=document.createElement("button");b.className="opt";
+      b.innerHTML="<b>"+LETTERS[oi]+".</b> "+opt;
+      if(answered){
+        b.disabled=true;
+        if(oi===q.a)b.classList.add("correct");
+        else if(qPick.get(idx)===oi)b.classList.add("wrong");
+      }
+      b.addEventListener("click",()=>{
+        if(qDone.has(idx))return;
+        qDone.add(idx);qPick.set(idx,oi);
+        card.querySelectorAll(".opt").forEach((ob,obi)=>{
+          ob.disabled=true;
+          if(obi===q.a)ob.classList.add("correct");
+        });
+        if(oi===q.a){qRight.add(idx);}else{b.classList.add("wrong");qWrong.add(idx);}
+        tip.classList.add("show");updateScore();saveProgress();renderQNav();
+      });
+      card.appendChild(b);
+    });
+    if(answered)tip.classList.add("show");
+    card.appendChild(tip);
+    list.appendChild(card);
+  });
+  updateScore();renderQNav();
+}
+$("shuffleBtn").addEventListener("click",()=>{shuffle(qOrder);renderQuiz();window.scrollTo({top:0,behavior:"smooth"});});
+$("wrongBtn").addEventListener("click",()=>{qWrongOnly=!qWrongOnly;$("wrongBtn").style.borderColor=qWrongOnly?"var(--accent)":"";renderQuiz();window.scrollTo({top:0,behavior:"smooth"});});
+$("resetBtn").addEventListener("click",()=>{resetQuiz();clearProgress();shuffleOptions();renderQuiz();window.scrollTo({top:0,behavior:"smooth"});});
+/* ---- Muc luc cau hoi: nhan so cau de nhay toi, hien dung/sai ---- */
+/* ---- Muc luc dong theo tab ---- */
+const NAV_TITLES={quiz:"M\u1ee5c l\u1ee5c tr\u1eafc nghi\u1ec7m",flash:"M\u1ee5c l\u1ee5c c\u00e2u h\u1ecfi ng\u1eafn",essay:"M\u1ee5c l\u1ee5c t\u1ef1 lu\u1eadn",timeline:"M\u1ee5c l\u1ee5c timeline",keys:"M\u1ee5c l\u1ee5c \u00fd ch\u00ednh"};
+function activeTab(){const t=document.querySelector(".tab.active");return t&&t.dataset.tab?t.dataset.tab:"quiz";}
+function jumpTo(id,openAcc){
+  document.getElementById("qNavOverlay").classList.remove("open");
+  const el=document.getElementById(id);if(!el)return;
+  if(openAcc)el.classList.add("open");
+  el.scrollIntoView({behavior:"smooth",block:"center"});
+  el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),1300);
+}
+function navNumBtn(nav,label,title,target,cls){
+  const b=document.createElement("button");
+  b.className="qn"+(cls?" "+cls:"");b.textContent=label;if(title)b.title=title;
+  b.addEventListener("click",()=>jumpTo(target));nav.appendChild(b);
+}
+function renderQNav(){
+  const nav=document.getElementById("qNav");if(!nav)return;nav.innerHTML="";
+  const tab=activeTab();
+  document.getElementById("qNavTitle").textContent=NAV_TITLES[tab]||"M\u1ee5c l\u1ee5c";
+  if(tab==="quiz"){
+    qOrder.forEach((idx,n)=>{navNumBtn(nav,n+1,"Di toi cau "+(n+1),"qcard-"+idx,qRight.has(idx)?"ok":qWrong.has(idx)?"bad":"");});
+  }else if(tab==="flash"){
+    fOrder.forEach((idx,n)=>{navNumBtn(nav,n+1,(FLASH[idx].c?"Chuong "+FLASH[idx].c+" - ":"")+"Cau "+(n+1),"fcard-"+n);});
+  }else if(tab==="essay"){
+    ESSAYS.forEach((e,i)=>{
+      const b=document.createElement("button");b.className="qnl";b.textContent=(i+1)+". "+e.t;
+      b.addEventListener("click",()=>jumpTo("essay-"+i,true));nav.appendChild(b);
+    });
+  }else if(tab==="timeline"&&typeof TL_RAW!=="undefined"){
+    TL_RAW.forEach((it,i)=>{navNumBtn(nav,i+1,String(it[0]),"tl-"+i);});
+  }else if(tab==="keys"){
+    document.querySelectorAll("#panel-keys h3").forEach(h=>{
+      if(!h.id)return;
+      const b=document.createElement("button");b.className="qnl";b.textContent=h.textContent;
+      b.addEventListener("click",()=>jumpTo(h.id));nav.appendChild(b);
+    });
+  }
+}
+const qNavFab=document.getElementById("qNavFab"),qNavOverlay=document.getElementById("qNavOverlay");
+qNavFab.addEventListener("click",()=>{renderQNav();qNavOverlay.classList.add("open");});
+document.getElementById("qNavClose").addEventListener("click",()=>qNavOverlay.classList.remove("open"));
+qNavOverlay.addEventListener("click",e=>{if(e.target===qNavOverlay)qNavOverlay.classList.remove("open");});
+/* ---- Nut len dau trang ---- */
+const toTopBtn=document.getElementById("toTop");
+window.addEventListener("scroll",()=>{toTopBtn.classList.toggle("show",window.scrollY>400);},{passive:true});
+toTopBtn.addEventListener("click",()=>{window.scrollTo({top:0,behavior:"smooth"});});
+
+/* ---- Câu hỏi ngắn: đáp án hiện ngay bên dưới ---- */
+let fOrder=[];
+function renderFlashList(){
+  const list=$("flashList");list.innerHTML="";
+  fOrder.forEach((idx,n)=>{
+    const f=FLASH[idx];
+    const d=document.createElement("div");d.className="card";d.id="fcard-"+n;
+    d.innerHTML='<div class="q-head"><span class="q-tag">Câu '+(n+1)+'</span></div>'
+      +'<p class="q-text">'+f.q+'</p>'
+      +'<div class="tip show"><b>Trả lời:</b> '+f.a+'</div>';
+    list.appendChild(d);
+  });
+}
+$("fcShuffle").addEventListener("click",()=>{shuffle(fOrder);renderFlashList();window.scrollTo({top:0,behavior:"smooth"});});
+
+/* ---- Essays ---- */
+function renderEssays(){
+  const box=$("essayList");box.innerHTML="";
+  ESSAYS.forEach((e,i)=>{
+    const d=document.createElement("div");d.className="acc";d.id="essay-"+i;
+    d.innerHTML='<div class="acc-head"><span>'+e.t+'</span><span>＋</span></div><div class="acc-body">'+e.h+'</div>';
+    d.querySelector(".acc-head").addEventListener("click",()=>{
+      d.classList.toggle("open");
+      d.querySelector(".acc-head span:last-child").textContent=d.classList.contains("open")?"－":"＋";
+    });
+    box.appendChild(d);
+  });
+}
+
+/* ---- Timeline ---- */
+function renderTimeline(){
+  const box=$("tlList");box.innerHTML="";
+  TL_RAW.forEach((it,i)=>{
+    const d=document.createElement("div");d.className="tl-item";d.id="tl-"+i;
+    d.innerHTML='<span class="tl-year">'+it[0]+'</span> – '+it[1];
+    box.appendChild(d);
+  });
+}
+
+/* ---- Init ---- */
+loadProgress();buildChapChips();rebuildOrder();renderQuiz();
+fOrder=FLASH.map((_,i)=>i);renderFlashList();
+renderEssays();renderTimeline();
+</script>
+</body>
+</html>
