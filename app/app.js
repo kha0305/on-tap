@@ -302,6 +302,13 @@ function renderTimeline(){
   const form = document.getElementById("fbForm");
   if (!form) return;
   document.getElementById("fbSubj").value = S.title;
+  const imgInput = document.getElementById("fbImg");
+  const imgPrev = document.getElementById("fbImgPrev");
+  imgInput.addEventListener("change", () => {
+    const f = imgInput.files && imgInput.files[0];
+    if (f) { imgPrev.src = URL.createObjectURL(f); imgPrev.style.display = "block"; }
+    else { imgPrev.removeAttribute("src"); imgPrev.style.display = "none"; }
+  });
   form.addEventListener("submit", e => {
     e.preventDefault();
     const name = document.getElementById("fbName").value.trim();
@@ -310,8 +317,20 @@ function renderTimeline(){
     if (!text) return;
     const subject = "[Góp ý web ôn tập] " + kind + " — " + S.code;
     const body = "Môn: " + S.title + "\nLoại: " + kind + "\nTên: " + (name || "(ẩn danh)") + "\n\n" + text;
+    const note = document.getElementById("fbNote");
+    const files = (imgInput.files && imgInput.files.length) ? [imgInput.files[0]] : [];
+    if (files.length && window.navigator && navigator.canShare && navigator.canShare({ files })) {
+      navigator.share({ title: subject, text: body, files }).then(() => {
+        note.textContent = "Đã chia sẻ góp ý kèm ảnh. Cảm ơn Bạn!";
+      }).catch(() => {
+        note.textContent = "Bạn chưa gửi — bấm Gửi góp ý lại khi sẵn sàng nhé.";
+      });
+      return;
+    }
     window.location.href = "mailto:baokha0905@gmail.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-    document.getElementById("fbNote").textContent = "Đã mở ứng dụng email — Bạn bấm Gửi trong đó là xong. Cảm ơn Bạn đã góp ý!";
+    note.textContent = files.length
+      ? "Đã mở ứng dụng email — nhớ đính kèm ảnh Bạn vừa chọn vào email nhé. Cảm ơn Bạn!"
+      : "Đã mở ứng dụng email — Bạn bấm Gửi trong đó là xong. Cảm ơn Bạn đã góp ý!";
   });
 })();
 

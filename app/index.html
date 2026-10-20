@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ôn tập</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 <div class="wrap">
@@ -104,6 +104,9 @@
       <input type="text" id="fbSubj" readonly>
       <label class="lbl" for="fbBody">Nội dung</label>
       <textarea id="fbBody" rows="5" required placeholder="Bạn thấy sai ở đâu, muốn thêm gì..."></textarea>
+      <label class="lbl" for="fbImg">Ảnh đính kèm (không bắt buộc)</label>
+      <input type="file" id="fbImg" accept="image/*">
+      <img id="fbImgPrev" alt="Ảnh đính kèm">
       <div class="toolbar"><button class="btn" type="submit">Gửi góp ý</button></div>
       <p class="sub" id="fbNote" style="margin:6px 0 0">Gửi bằng ứng dụng email trên máy của Bạn.</p>
     </form>
