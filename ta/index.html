@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FFF9F2">
+<link rel="icon" href="data:,">
+<title>Kids English Lite</title>
+<style>
+/* Kids English Lite — giao diện sáng, nhẹ, không font ngoài, animation tối thiểu */
+:root{
+  --bg:#FFF9F2; --card:#FFFFFF; --ink:#453A4D; --muted:#9C90A6;
+  --brand:#FF8A5C; --brand-d:#E56B3D; --blue:#3FA9F5; --ok:#3FA46F;
+  --warn:#E8A13D; --bad:#E56B6B; --line:#F0E6D8;
+  --r:18px;
+  --shadow:0 2px 10px rgba(120,90,60,.08);
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);line-height:1.5;min-height:100vh}
+#app{max-width:720px;margin:0 auto;padding:0 16px 48px}
+
+/* Top bar */
+.topbar{position:sticky;top:0;z-index:10;background:rgba(255,249,242,.96);
+  backdrop-filter:blur(6px);display:flex;align-items:center;gap:12px;
+  padding:12px 0;margin:0 -16px;padding-left:16px;padding-right:16px;border-bottom:1px solid var(--line)}
+.topbar h1{font-size:1.05rem;font-weight:800;letter-spacing:.2px;flex:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iconbtn{width:42px;height:42px;flex:none;border:1px solid var(--line);background:var(--card);
+  border-radius:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:var(--shadow)}
+.iconbtn:active{transform:scale(.94)}
+.iconbtn svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:2.2;
+  stroke-linecap:round;stroke-linejoin:round}
+.iconbtn.primary{background:var(--brand);border-color:var(--brand)}
+.iconbtn.primary svg{stroke:#fff}
+
+/* Nút */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;
+  padding:12px 20px;border:none;border-radius:16px;font-family:var(--font);
+  font-size:1rem;font-weight:700;cursor:pointer;color:#fff;background:var(--brand);
+  box-shadow:var(--shadow);width:100%}
+.btn:active{transform:scale(.98)}
+.btn.blue{background:var(--blue)}
+.btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line)}
+.btn.small{min-height:44px;font-size:.9rem;padding:8px 14px;width:auto}
+.btn svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.btn.ghost svg{stroke:var(--ink)}
+.btnrow{display:flex;gap:10px}
+.btnrow .btn{flex:1}
+
+/* Trang chủ */
+.hero{padding:26px 4px 8px}
+.hero h2{font-size:1.5rem;font-weight:800;letter-spacing:.2px}
+.hero p{color:var(--muted);margin-top:4px;font-size:.95rem}
+.stats{display:flex;gap:10px;margin:16px 0 20px}
+.stat{flex:1;background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:12px 8px;text-align:center;box-shadow:var(--shadow)}
+.stat b{display:block;font-size:1.4rem;font-weight:800}
+.stat span{font-size:.75rem;color:var(--muted)}
+.stat.c1 b{color:var(--brand-d)} .stat.c2 b{color:var(--blue)} .stat.c3 b{color:var(--ok)}
+.section-t{font-size:1.05rem;font-weight:800;margin:18px 0 10px}
+.levels{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.level{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:14px;cursor:pointer;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  font-family:var(--font);color:var(--ink);text-align:left;width:100%}
+.level:active{transform:scale(.98)}
+.level .bar{height:6px;background:#F3EADA;border-radius:99px;margin-top:10px;overflow:hidden}
+.level .bar i{display:block;height:100%;background:var(--brand);border-radius:99px}
+.level h3{font-size:.92rem;font-weight:800;line-height:1.35;min-height:2.6em;padding-right:64px}
+.level .meta{font-size:.78rem;color:var(--muted);margin-top:4px}
+.level .due{position:absolute;top:10px;right:10px;background:var(--warn);color:#fff;
+  font-size:.7rem;font-weight:800;border-radius:99px;padding:3px 9px}
+.level:nth-child(10n+1){background:#FFF3E8}.level:nth-child(10n+2){background:#EAF6FF}
+.level:nth-child(10n+3){background:#F0FBEF}.level:nth-child(10n+4){background:#FFF8E1}
+.level:nth-child(10n+5){background:#F3EDFF}.level:nth-child(10n+6){background:#FFEFEF}
+.level:nth-child(10n+7){background:#E8FAF6}.level:nth-child(10n+8){background:#FFF0F5}
+.level:nth-child(10n+9){background:#F0F4FF}.level:nth-child(10n+10){background:#F7FFE8}
+
+/* Trang level */
+.lhead{padding:20px 4px 6px}
+.lhead h2{font-size:1.35rem;font-weight:800}
+.lhead p{color:var(--muted);font-size:.9rem;margin-top:6px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;padding:12px 2px}
+.chip{flex:none;padding:9px 15px;border-radius:99px;border:1.5px solid var(--line);
+  background:var(--card);font-family:var(--font);font-size:.85rem;font-weight:600;
+  color:var(--ink);cursor:pointer;white-space:nowrap}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.actions{display:grid;gap:10px;margin-top:8px}
+.action{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;box-shadow:var(--shadow);
+  font-family:var(--font);color:var(--ink);text-align:left;width:100%}
+.action:active{transform:scale(.99)}
+.action .ai{width:46px;height:46px;flex:none;border-radius:14px;display:flex;
+  align-items:center;justify-content:center}
+.action .ai svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.action b{display:block;font-size:1rem}
+.action span span{display:block;font-size:.8rem;color:var(--muted)}
+.action .n{margin-left:auto;background:var(--warn);color:#fff;font-size:.75rem;
+  font-weight:800;border-radius:99px;padding:4px 10px;flex:none}
+
+/* Thẻ học */
+.fwrap{padding:18px 0}
+.fprog{text-align:center;color:var(--muted);font-size:.85rem;font-weight:600;margin-bottom:10px}
+.fcard{perspective:900px;cursor:pointer;min-height:340px}
+.finner{position:relative;width:100%;min-height:340px;transform-style:preserve-3d;transition:transform .35s ease}
+.fcard.flipped .finner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:28px 22px;text-align:center;gap:10px}
+.face.back{transform:rotateY(180deg);background:#FFFDF8}
+.face .word{font-size:2.1rem;font-weight:800;letter-spacing:.3px}
+.face .ipa{color:var(--muted);font-size:1rem}
+.face .mean{font-size:1.5rem;font-weight:800}
+.face .ph{color:var(--brand-d);font-weight:700}
+.face .type{font-size:.75rem;color:var(--muted);border:1px solid var(--line);
+  border-radius:99px;padding:3px 12px}
+.face .ex{font-size:.92rem;font-style:italic;color:var(--ink);margin-top:6px}
+.face .exvi{font-size:.88rem;color:var(--muted)}
+.face .hint{font-size:.78rem;color:var(--muted);margin-top:8px}
+.fctl{display:flex;gap:10px;margin-top:16px;align-items:center;justify-content:center}
+.fmark{display:flex;gap:10px;margin-top:12px}
+.fmark .btn{flex:1}
+.fmark .no{background:var(--card);color:var(--bad);border:1.5px solid #F6D2D2}
+.fmark .yes{background:var(--card);color:var(--ok);border:1.5px solid #BFE6CF}
+
+/* Ôn tập SRS */
+.rq{padding:18px 0;text-align:center}
+.rword{font-size:2rem;font-weight:800;margin:26px 0 6px}
+.rsub{color:var(--muted);font-size:.9rem;margin-bottom:14px}
+.rmean{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:20px;box-shadow:var(--shadow);margin:14px 0}
+.rmean .m{font-size:1.35rem;font-weight:800}
+.rmean .p{color:var(--brand-d);font-weight:700;margin-top:4px}
+.rates{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.rate{border:1.5px solid var(--line);background:var(--card);border-radius:16px;
+  padding:14px 8px;font-family:var(--font);font-weight:700;font-size:.92rem;cursor:pointer}
+.rate small{display:block;font-weight:500;color:var(--muted);font-size:.75rem;margin-top:2px}
+.rate:active{transform:scale(.97)}
+.rate.r0{border-color:#F6D2D2;color:var(--bad)}
+.rate.r1{border-color:#F3DFAE;color:var(--warn)}
+.rate.r2{border-color:#BFE6CF;color:var(--ok)}
+.rate.r3{border-color:#BFE0F6;color:var(--blue)}
+
+/* Trắc nghiệm */
+.qwrap{padding:18px 0}
+.qprog{height:8px;background:#F3EADA;border-radius:99px;overflow:hidden;margin-bottom:14px}
+.qprog i{display:block;height:100%;background:var(--blue);border-radius:99px;transition:width .25s}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:22px;box-shadow:var(--shadow)}
+.qcard .qw{font-size:1.7rem;font-weight:800;text-align:center}
+.qcard .qp{text-align:center;color:var(--muted);margin-top:4px}
+.qcard .ask{text-align:center;margin:12px 0 4px;font-weight:700}
+.opts{display:grid;gap:10px;margin-top:12px}
+.opt{border:1.5px solid var(--line);background:#FFFDF9;border-radius:14px;padding:14px 16px;
+  font-family:var(--font);font-size:1rem;font-weight:600;color:var(--ink);cursor:pointer;text-align:left}
+.opt:active{transform:scale(.99)}
+.opt.correct{border-color:var(--ok);background:#EAF7F0;color:#20663F}
+.opt.wrong{border-color:var(--bad);background:#FDECEC;color:#A03A3A}
+.opt:disabled{cursor:default;opacity:.95}
+.qfb{text-align:center;font-weight:800;margin-top:12px;min-height:1.6em}
+.qfb.good{color:var(--ok)} .qfb.bad{color:var(--bad)}
+
+/* Kết quả */
+.done{text-align:center;padding:34px 10px}
+.done h2{font-size:1.5rem;font-weight:800;margin-bottom:8px}
+.done .big{font-size:3rem;font-weight:800;color:var(--brand-d);margin:10px 0}
+.done p{color:var(--muted);margin-bottom:18px}
+.wrongs{text-align:left;margin:16px 0;display:grid;gap:8px}
+.wrongs .wi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:.9rem}
+.wrongs .wi b{color:var(--brand-d)}
+.wrongs .wi span{color:var(--ok);font-weight:700}
+
+.empty{text-align:center;color:var(--muted);padding:40px 16px}
+.empty p{margin-bottom:16px}
+@media(min-width:560px){.levels{grid-template-columns:1fr 1fr 1fr}}
+
+/* Chế độ tối — theo cài đặt hệ thống */
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#1D1820; --card:#2A2330; --ink:#F2EAF4; --muted:#A99BB5;
+    --brand:#FF9A6B; --brand-d:#FFB08A; --blue:#5DB8F7; --ok:#4CC084;
+    --warn:#E8B45C; --bad:#F08A8A; --line:#3E3447;
+    --shadow:0 2px 10px rgba(0,0,0,.35);
+  }
+  .topbar{background:rgba(29,24,32,.96)}
+  .level .bar,.qprog{background:#3A3044}
+  .level:nth-child(10n+1){background:#33281F}.level:nth-child(10n+2){background:#22303C}
+  .level:nth-child(10n+3){background:#25331F}.level:nth-child(10n+4){background:#38311C}
+  .level:nth-child(10n+5){background:#2E2440}.level:nth-child(10n+6){background:#372325}
+  .level:nth-child(10n+7){background:#1F3330}.level:nth-child(10n+8){background:#37232E}
+  .level:nth-child(10n+9){background:#242F42}.level:nth-child(10n+10){background:#2E3A1E}
+  .face.back{background:#2A2330}
+  .opt{background:#2A2330}
+  .opt.correct{background:#1E3A2A;color:#9FE3BC}
+  .opt.wrong{background:#402626;color:#F5B5B5}
+  .fmark .no{border-color:#5A3434}
+  .fmark .yes{border-color:#2F5A40}
+  .rate.r0{border-color:#5A3434}.rate.r1{border-color:#5A4A24}
+  .rate.r2{border-color:#2F5A40}.rate.r3{border-color:#2C4E6B}
+}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+'use strict';
+/* Logic thuần túy của Kids English Lite — không phụ thuộc DOM, test được bằng node. */
+
+function shuffle(arr, rnd) {
+  const a = arr.slice();
+  const r = rnd || Math.random;
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(r() * (i + 1));
+    const t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function todayStr(d) {
+  d = d || new Date();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return d.getFullYear() + '-' + m + '-' + day;
+}
+
+function addDaysStr(s, n) {
+  const d = new Date(s + 'T00:00:00');
+  d.setDate(d.getDate() + n);
+  return todayStr(d);
+}
+
+// Thuật toán SuperMemo SM-2 chuẩn.
+// st: {ef, ivl, reps, due} — q: 0 (quên), 3 (khó), 4 (được), 5 (dễ)
+function sm2(st, q, today) {
+  today = today || todayStr();
+  if (q < 3) {
+    st.reps = 0;
+    st.ivl = 1;
+  } else {
+    st.ef = Math.max(1.3, st.ef + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02)));
+    st.reps += 1;
+    if (st.reps === 1) st.ivl = 1;
+    else if (st.reps === 2) st.ivl = 6;
+    else st.ivl = Math.round(st.ivl * st.ef);
+  }
+  st.due = addDaysStr(today, st.ivl);
+  st.last = today;
+  return st;
+}
+
+function newWordState(today) {
+  return { ef: 2.5, ivl: 0, reps: 0, due: today || todayStr(), last: null };
+}
+
+// Tạo đề trắc nghiệm: n câu, mỗi câu 4 đáp án nghĩa (không trùng, đáp án đúng luôn có mặt).
+function makeQuiz(words, n, rnd) {
+  const pool = shuffle(words, rnd);
+  const count = Math.min(n, pool.length);
+  const out = [];
+  for (let i = 0; i < count; i++) {
+    const w = pool[i];
+    const others = shuffle(pool.filter((x, j) => j !== i && x.m !== w.m), rnd).slice(0, 3);
+    const options = shuffle([w.m].concat(others.map(x => x.m)), rnd);
+    out.push({ word: w.w, ipa: w.ipa, ph: w.ph, answer: w.m, options: options, ex: w.ex, exVi: w.exVi });
+  }
+  return out;
+}
+
+// Chuỗi ngày học liên tục (streak) từ map ngày -> số lượt học.
+function calcStreak(days, today) {
+  today = today || todayStr();
+  let streak = 0;
+  let d = today;
+  if (!days[d]) d = addDaysStr(today, -1); // hôm nay chưa học thì tính từ hôm qua
+  while (days[d]) { streak++; d = addDaysStr(d, -1); }
+  return streak;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { shuffle, todayStr, addDaysStr, sm2, newWordState, makeQuiz, calcStreak };
+}
+
+</script>
+<script>
+const META={"levels":[{"id":"L1","short":"Cấp độ L1 · Khởi Động","description":"Từ đơn, nhận biết hình ảnh, phản xạ nghe–chọn. Màu sắc, số đếm 1-10, hình dạng, gia đình, cơ thể, động vật, đồ ăn, lớp học, đồ chơi, côn trùng, phòng tắm, cảm xúc, trang trại.","words":143},{"id":"L2","short":"Cấp độ L2 · Cơ Bản","description":"Câu ngắn, sinh hoạt, trường học, mô tả vị trí. Ngôi nhà, quần áo, sinh hoạt hằng ngày, thời tiết, giao thông, môn học, bếp, sinh vật biển, mùa, vị trí.","words":142},{"id":"L3","short":"Cấp độ L3 · Mở Rộng","description":"Giao tiếp thực tế, xã hội, công nghệ và thiên nhiên. Thiên nhiên, sức khỏe, mua sắm, du lịch, công nghệ, nhà hàng, văn phòng, thiên tai, truyền thông, miêu tả con người.","words":137},{"id":"L4","short":"Cấp độ L4 · Nâng Cao Cho Bé","description":"Từ học thuật cơ bản, khoa học, tư duy và công dân. Khoa học cơ bản, không gian, thể thao Olympic, âm nhạc, nghệ thuật, kiến trúc, hành tinh vũ trụ.","words":147},{"id":"L5","short":"Cấp độ L5 · Tiên Phong","description":"Ngôn ngữ học thuật đọc hiểu, viết văn, thuyết trình. Lịch sử thế giới, sinh học tế bào, hóa học chất, vật lý năng lượng, lập trình máy tính.","words":131},{"id":"L6","short":"Cấp độ L6 · Hội Nhập Quốc Tế","description":"Ngôn ngữ học thuật quốc tế, IELTS/TOEFL cơ bản, giao tiếp toàn cầu. Giao tiếp ưu việt, chính trị học, IELTS academic, thành ngữ nâng cao, tư duy hệ thống.","words":125},{"id":"BIO","short":"Sinh Vật","description":"Kho từ vựng chuyên sâu về thế giới động thực vật toàn cầu: Thú thảo nguyên, động vật săn mồi, chim muông, sinh vật đại dương sâu, bò sát, côn trùng, cổ thụ, muôn hoa, nấm và giải phẫu sinh học.","words":114},{"id":"COLOR","short":"Sắc Màu","description":"Kho từ vựng chuyên sâu về thế giới màu sắc: Sắc đỏ & hồng, sắc lam đại dương & bầu trời, sắc lục ngọc bích, sắc vàng kim & hổ phách, sắc tím hoàng gia, sắc cam đất nung, sắc nâu gỗ, sắc đen & bạc kim loại, sắc trắng tinh khôi & quang học ngũ sắc.","words":115},{"id":"NUM","short":"Số Đếm","description":"Bộ từ vựng bách khoa toàn diện về số đếm (cardinal numbers), số thứ tự (ordinal numbers), phân số (fractions), bội số (multipliers), đơn vị đếm tập hợp và ký số La Mã trong tiếng Anh chuẩn quốc tế.","words":118},{"id":"ENC","short":"Bách Khoa","description":"Bách khoa toàn thư từ vựng toàn cầu siêu chi tiết: Khủng long tiền sử, vũ trụ và các hành tinh, ẩm thực quốc tế, nông sản thế giới, thiên tai & kỳ quan, nhạc cụ, cơ thể học, thể thao Olympic, kiến trúc & cảm xúc tâm hồn.","words":230}]};
+</script>
+<script>
+'use strict';
+/* Kids English Lite — UI vanilla JS. DB được nhúng lúc build. core.js nạp trước file này. */
+
+/* ---------- Icon SVG nét đơn giản ---------- */
+const ICONS = {
+  back: '<path d="M15 5l-7 7 7 7"/>',
+  home: '<path d="M4 11l8-7 8 7"/><path d="M6 9.5V20h12V9.5"/>',
+  speaker: '<path d="M4 10v4h4l5 4V6l-5 4H4z"/><path d="M16.5 9a4.2 4.2 0 010 6"/><path d="M19 6.5a8 8 0 010 11"/>',
+  prev: '<path d="M14 6l-6 6 6 6"/>',
+  next: '<path d="M10 6l6 6-6 6"/>',
+  shuffle: '<path d="M4 6h4l8 12h4"/><path d="M4 18h4l2.5-3.5"/><path d="M13.5 9.5L16 6h4"/><path d="M18 4v4h-4"/><path d="M18 16v4h-4"/>',
+  cards: '<rect x="5" y="4" width="14" height="17" rx="2.5"/><path d="M9 4V3h10a1 1 0 011 1v13"/>',
+  brain: '<path d="M9.5 3.5A2.5 2.5 0 0112 6a2.5 2.5 0 012.5-2.5A2.5 2.5 0 0117 6c1.5.5 2.5 2 2.5 3.8 0 1.2-.6 2.3-1.4 3A3.5 3.5 0 0117 16c-.4 2-2 3.5-4 3.5-1 0-1.8-.3-2.5-.9L12 21l-1.5-2.4c-.7.6-1.5.9-2.5.9-2 0-3.6-1.5-4-3.5a3.5 3.5 0 01-1.1-3.2c-.8-.7-1.4-1.8-1.4-3C1.5 8 2.5 6.5 4 6a2.5 2.5 0 012.5-2.5A2.5 2.5 0 019 6a2.5 2.5 0 01.5-2.5z"/>',
+  game: '<rect x="3" y="7" width="18" height="11" rx="5.5"/><path d="M8 11v4M6 13h4"/><circle cx="16" cy="11.5" r=".8"/><circle cx="18" cy="14" r=".8"/>',
+  check: '<path d="M4.5 12.5l5 5 10-11"/>',
+  star: '<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8L3.5 9.7l5.9-.8z"/>'
+};
+function icon(n) {
+  return '<svg viewBox="0 0 24 24">' + ICONS[n] + '</svg>';
+}
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+/* ---------- Lưu trữ ---------- */
+const SKEY = 'kel_v1';
+function loadStore() {
+  try { return JSON.parse(localStorage.getItem(SKEY)) || { w: {}, d: {} }; }
+  catch (e) { return { w: {}, d: {} }; }
+}
+let store = loadStore();
+function save() { try { localStorage.setItem(SKEY, JSON.stringify(store)); } catch (e) {} }
+function wkey(lv, i) { return lv + ':' + i; }
+function wstate(lv, i) {
+  const k = wkey(lv, i);
+  if (!store.w[k]) { store.w[k] = newWordState(); save(); }
+  return store.w[k];
+}
+function touchDay() { const t = todayStr(); store.d[t] = (store.d[t] || 0) + 1; save(); }
+
+/* ---------- Dữ liệu: META nhúng sẵn, từ vựng tải theo level khi cần ---------- */
+const LVDATA = {};   // lv -> {units, words} sau khi tải
+const LVFAIL = {};   // lv -> true nếu tải lỗi
+function levelTotal(lv) {
+  const M = META.levels.find(x => x.id === lv);
+  return M ? M.words : 0;
+}
+function dueList(lv) {
+  const t = todayStr(), words = LVDATA[lv].words, out = [];
+  for (let i = 0; i < words.length; i++) {
+    const st = wstate(lv, i);
+    if (st.due <= t) out.push(i);
+  }
+  out.sort((a, b) => (wstate(lv, a).due < wstate(lv, b).due ? -1 : 1));
+  return out;
+}
+function learnedCount(lv) {
+  const words = LVDATA[lv].words; let n = 0;
+  for (let i = 0; i < words.length; i++) if (wstate(lv, i).reps > 0) n++;
+  return n;
+}
+/* Đếm nhanh từ store, không cần tải dữ liệu level (dùng ở trang chủ) */
+function scanCounts(lv) {
+  const t = todayStr(); let learned = 0, due = 0;
+  const pre = lv + ':';
+  Object.keys(store.w).forEach(k => {
+    if (k.indexOf(pre) !== 0) return;
+    const st = store.w[k];
+    if (st.reps > 0) learned++;
+    if (st.due <= t) due++;
+  });
+  return { learned: learned, due: due, started: Object.keys(store.w).some(k => k.indexOf(pre) === 0) };
+}
+function ensureLevel(lv, draw) {
+  if (LVDATA[lv]) { draw(); return; }
+  app.innerHTML = topbar(shortName(lv), true) +
+    '<div class="empty"><p>Đang tải dữ liệu…</p></div>';
+  bindChrome(true);
+  if (LVFAIL[lv]) { drawLoadError(lv, draw); return; }
+  fetch('assets/' + lv + '.json')
+    .then(r => { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+    .then(d => { LVDATA[lv] = d; draw(); })
+    .catch(() => { LVFAIL[lv] = true; drawLoadError(lv, draw); });
+}
+function drawLoadError(lv, draw) {
+  app.innerHTML = topbar(shortName(lv), true) +
+    '<div class="empty"><p>Không tải được dữ liệu của cấp độ này. Kiểm tra kết nối mạng rồi thử lại.</p>' +
+    '<button class="btn" id="e-retry">Thử lại</button></div>';
+  bindChrome(true);
+  document.getElementById('e-retry').onclick = () => {
+    delete LVFAIL[lv];
+    fetch('assets/' + lv + '.json')
+      .then(r => { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+      .then(d => { LVDATA[lv] = d; draw(); })
+      .catch(() => { LVFAIL[lv] = true; drawLoadError(lv, draw); });
+  };
+}
+
+/* ---------- Phát âm ---------- */
+let VOICES = [];
+function initVoices() {
+  if (!('speechSynthesis' in window)) return;
+  VOICES = speechSynthesis.getVoices();
+  if (speechSynthesis.onvoiceschanged !== undefined)
+    speechSynthesis.onvoiceschanged = initVoices;
+}
+function speak(t) {
+  if (!('speechSynthesis' in window)) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(t);
+    u.lang = 'en-US'; u.rate = 0.88; u.pitch = 1;
+    const v = VOICES.find(v => v.lang === 'en-US' && /google/i.test(v.name))
+      || VOICES.find(v => v.lang === 'en-US')
+      || VOICES.find(v => /^en/i.test(v.lang));
+    if (v) u.voice = v;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+/* ---------- Điều hướng ---------- */
+const app = document.getElementById('app');
+const stack = [];
+function go(view, params, title) {
+  stack.push({ view, params: params || {}, title: title || '' });
+  render();
+  window.scrollTo(0, 0);
+}
+function back() {
+  if (stack.length > 1) { stack.pop(); render(); window.scrollTo(0, 0); }
+}
+function topbar(title, showBack) {
+  return '<div class="topbar">' +
+    (showBack ? '<button class="iconbtn" id="btn-back" aria-label="Quay lại">' + icon('back') + '</button>' : '') +
+    '<h1>' + esc(title) + '</h1>' +
+    (showBack ? '<button class="iconbtn" id="btn-home" aria-label="Trang chủ">' + icon('home') + '</button>'
+              : '<span style="width:42px"></span>') +
+    '</div>';
+}
+function bindChrome(showBack) {
+  const b = document.getElementById('btn-back');
+  if (b) b.onclick = back;
+  const h = document.getElementById('btn-home');
+  if (h) h.onclick = () => { while (stack.length > 1) stack.pop(); render(); window.scrollTo(0, 0); };
+}
+function render() {
+  const cur = stack[stack.length - 1];
+  VIEWS[cur.view](cur.params);
+}
+
+/* ---------- Trang chủ ---------- */
+function vHome() {
+  let learned = 0, total = 0, due = 0;
+  META.levels.forEach(L => {
+    total += L.words;
+    const c = scanCounts(L.id);
+    learned += c.learned; due += c.due;
+  });
+  const streak = calcStreak(store.d);
+  let h = topbar('Kids English Lite', false);
+  h += '<div class="hero"><h2>Học tiếng Anh mỗi ngày</h2><p>' + total + ' từ vựng · 10 cấp độ · phát âm chuẩn</p></div>';
+  h += '<div class="stats">' +
+    '<div class="stat c1"><b>' + learned + '</b><span>Đã học</span></div>' +
+    '<div class="stat c2"><b>' + due + '</b><span>Cần ôn</span></div>' +
+    '<div class="stat c3"><b>' + streak + '</b><span>Ngày liên tục</span></div></div>';
+  h += '<div class="section-t">Chọn cấp độ</div><div class="levels">';
+  META.levels.forEach(L => {
+    const n = L.words, c = scanCounts(L.id);
+    const pct = n ? Math.round(c.learned / n * 100) : 0;
+    h += '<button type="button" class="level" data-lv="' + L.id + '">' +
+      (c.due ? '<span class="due">' + c.due + ' ôn</span>' : '') +
+      '<h3>' + esc(L.short) + '</h3>' +
+      '<div class="meta">' + n + ' từ · đã học ' + c.learned + '</div>' +
+      '<div class="bar"><i style="width:' + pct + '%"></i></div></button>';
+  });
+  h += '</div>';
+  app.innerHTML = h;
+  bindChrome(false);
+  app.querySelectorAll('.level').forEach(el => {
+    el.onclick = () => go('level', { lv: el.dataset.lv }, shortName(el.dataset.lv));
+  });
+}
+function shortName(lv) {
+  const L = META.levels.find(x => x.id === lv);
+  return L ? L.short : lv;
+}
+
+/* ---------- Trang cấp độ ---------- */
+function vLevel(p) { ensureLevel(p.lv, () => drawLevel(p)); }
+function drawLevel(p) {
+  const lv = p.lv, D = LVDATA[lv], L = META.levels.find(x => x.id === lv);
+  const unit = p.unit || 0;
+  const due = dueList(lv).length, n = D.words.length, ln = learnedCount(lv);
+  let h = topbar(L.short, true);
+  h += '<div class="lhead"><h2>' + esc(L.short) + '</h2><p>' + esc(L.description) +
+    '</p><p>' + n + ' từ · đã học ' + ln + '</p></div>';
+  h += '<div class="chips"><button class="chip' + (unit === 0 ? ' on' : '') + '" data-u="0">Tất cả</button>';
+  D.units.forEach((u, idx) => {
+    h += '<button class="chip' + (unit === idx + 1 ? ' on' : '') + '" data-u="' + (idx + 1) + '">' +
+      esc(unitShort(u.name)) + '</button>';
+  });
+  h += '</div>';
+  h += '<div class="actions">' +
+    act('cards', '#FF8A5C', 'Học thẻ', 'Lật thẻ, nghe phát âm, đánh dấu đã thuộc') +
+    act('brain', '#3FA9F5', 'Ôn tập', 'Ôn theo lịch nhớ lâu SRS', due ? '<span class="n">' + due + '</span>' : '') +
+    act('game', '#3FA46F', 'Trắc nghiệm', '10 câu hỏi, 4 đáp án') +
+    '</div>';
+  app.innerHTML = h;
+  bindChrome(true);
+  app.querySelectorAll('.chip').forEach(c => {
+    c.onclick = () => { stack[stack.length - 1].params.unit = +c.dataset.u; render(); };
+  });
+  const acts = app.querySelectorAll('.action');
+  acts[0].onclick = () => go('cards', { lv, unit }, 'Học thẻ');
+  acts[1].onclick = () => go('review', { lv }, 'Ôn tập');
+  acts[2].onclick = () => go('quiz', { lv, unit }, 'Trắc nghiệm');
+}
+function act(ic, bg, t, s, badge) {
+  return '<button type="button" class="action"><span class="ai" style="background:' + bg + '">' + icon(ic) + '</span>' +
+    '<span><b>' + t + '</b><span>' + s + '</span></span>' + (badge || '') + '</button>';
+}
+function unitShort(name) {
+  const m = name.match(/\d+\.\s*(.+?)\s*\(/);
+  return m ? m[1] : name;
+}
+
+/* ---------- Học thẻ ---------- */
+function vCards(p) { ensureLevel(p.lv, () => drawCards(p)); }
+function drawCards(p) {
+  const lv = p.lv, D = LVDATA[lv];
+  let idxs = [];
+  for (let i = 0; i < D.words.length; i++)
+    if (!p.unit || D.words[i].u === p.unit) idxs.push(i);
+  if (!idxs.length) { app.innerHTML = topbar('Học thẻ', true) + '<div class="empty"><p>Chưa có từ nào.</p></div>'; bindChrome(true); return; }
+  idxs = shuffle(idxs);
+  const s = { idxs, pos: 0, flipped: false };
+  drawCard(s, p);
+}
+function drawCard(s, p) {
+  const lv = p.lv, D = LVDATA[lv], w = D.words[s.idxs[s.pos]];
+  let h = topbar('Học thẻ · ' + shortName(lv), true);
+  h += '<div class="fwrap"><div class="fprog">' + (s.pos + 1) + ' / ' + s.idxs.length + '</div>';
+  h += '<div class="fcard' + (s.flipped ? ' flipped' : '') + '" id="fcard" role="button" tabindex="0" aria-label="Lật thẻ xem nghĩa"><div class="finner">';
+  h += '<div class="face"><div class="word">' + esc(w.w) + '</div>' +
+    '<div class="ipa">' + esc(w.ipa) + '</div>' +
+    '<button class="iconbtn primary" id="f-say" aria-label="Phát âm">' + icon('speaker') + '</button>' +
+    '<div class="hint">Chạm vào thẻ để xem nghĩa</div></div>';
+  h += '<div class="face back"><div class="mean">' + esc(w.m) + '</div>' +
+    '<div class="ph">' + esc(w.ph) + '</div>' +
+    '<div class="type">' + esc(w.t) + '</div>' +
+    '<div class="ex">“' + esc(w.ex) + '”</div>' +
+    '<div class="exvi">' + esc(w.exVi) + '</div></div>';
+  h += '</div></div>';
+  h += '<div class="fctl">' +
+    '<button class="iconbtn" id="f-prev" aria-label="Từ trước">' + icon('prev') + '</button>' +
+    '<button class="iconbtn" id="f-shuf" aria-label="Xáo trộn">' + icon('shuffle') + '</button>' +
+    '<button class="iconbtn" id="f-next" aria-label="Từ tiếp">' + icon('next') + '</button></div>';
+  h += '<div class="fmark"><button class="btn no" id="f-no">Chưa thuộc</button>' +
+    '<button class="btn yes" id="f-yes">Đã thuộc</button></div></div>';
+  app.innerHTML = h;
+  bindChrome(true);
+  const card = document.getElementById('fcard');
+  card.onclick = () => { s.flipped = !s.flipped; card.classList.toggle('flipped', s.flipped); };
+  card.onkeydown = e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.onclick(); }
+  };
+  document.getElementById('f-say').onclick = e => { e.stopPropagation(); speak(w.w); };
+  document.getElementById('f-prev').onclick = e => { e.stopPropagation(); step(s, p, -1); };
+  document.getElementById('f-next').onclick = e => { e.stopPropagation(); step(s, p, 1); };
+  document.getElementById('f-shuf').onclick = e => {
+    e.stopPropagation(); s.idxs = shuffle(s.idxs); s.pos = 0; s.flipped = false; drawCard(s, p);
+  };
+  document.getElementById('f-no').onclick = e => { e.stopPropagation(); rate(s, p, 0); };
+  document.getElementById('f-yes').onclick = e => { e.stopPropagation(); rate(s, p, 5); };
+}
+function step(s, p, d) {
+  s.pos = (s.pos + d + s.idxs.length) % s.idxs.length;
+  s.flipped = false;
+  drawCard(s, p);
+}
+function rate(s, p, q) {
+  const lv = p.lv, i = s.idxs[s.pos];
+  sm2(wstate(lv, i), q); save(); touchDay();
+  step(s, p, 1);
+}
+
+/* ---------- Ôn tập SRS ---------- */
+function vReview(p) { ensureLevel(p.lv, () => drawReviewStart(p)); }
+function drawReviewStart(p) {
+  const lv = p.lv;
+  const queue = dueList(lv);
+  if (!queue.length) {
+    app.innerHTML = topbar('Ôn tập', true) +
+      '<div class="empty"><p>Tuyệt vời! Không còn từ nào cần ôn hôm nay.</p>' +
+      '<button class="btn" id="e-go">Học thẻ tiếp</button></div>';
+    bindChrome(true);
+    document.getElementById('e-go').onclick = () => go('cards', { lv, unit: 0 }, 'Học thẻ');
+    return;
+  }
+  const s = { queue, pos: 0, show: false, ok: 0 };
+  drawReview(s, p);
+}
+function drawReview(s, p) {
+  const lv = p.lv, D = LVDATA[lv], w = D.words[s.queue[s.pos]];
+  let h = topbar('Ôn tập · ' + shortName(lv), true);
+  h += '<div class="rq"><div class="fprog">' + (s.pos + 1) + ' / ' + s.queue.length + '</div>';
+  h += '<div class="rword">' + esc(w.w) + '</div>';
+  h += '<div><button class="iconbtn primary" id="r-say" aria-label="Phát âm" style="margin:0 auto">' +
+    icon('speaker') + '</button></div>';
+  if (!s.show) {
+    h += '<div class="rsub">Nghĩ nghĩa của từ, rồi bấm hiện đáp án</div>' +
+      '<button class="btn blue" id="r-show">Hiện đáp án</button>';
+  } else {
+    h += '<div class="rmean"><div class="m">' + esc(w.m) + '</div>' +
+      '<div class="p">' + esc(w.ph) + ' · ' + esc(w.ipa) + '</div></div>';
+    h += '<div class="rsub">Bạn nhớ từ này ở mức nào?</div><div class="rates">' +
+      '<button class="rate r0" data-q="0">Quên<small>ôn lại ngay mai</small></button>' +
+      '<button class="rate r1" data-q="3">Hơi khó<small>nhớ mang máng</small></button>' +
+      '<button class="rate r2" data-q="4">Nhớ được<small>hơi ngập ngừng</small></button>' +
+      '<button class="rate r3" data-q="5">Dễ ợt<small>nhớ ngay lập tức</small></button></div>';
+  }
+  h += '</div>';
+  app.innerHTML = h;
+  bindChrome(true);
+  document.getElementById('r-say').onclick = () => speak(w.w);
+  if (!s.show) {
+    document.getElementById('r-show').onclick = () => { s.show = true; drawReview(s, p); };
+  } else {
+    app.querySelectorAll('.rate').forEach(b => {
+      b.onclick = () => {
+        const q = +b.dataset.q;
+        sm2(wstate(lv, s.queue[s.pos]), q); save(); touchDay();
+        if (q >= 3) s.ok++;
+        s.pos++; s.show = false;
+        if (s.pos >= s.queue.length) drawReviewDone(s, p);
+        else drawReview(s, p);
+      };
+    });
+  }
+}
+function drawReviewDone(s, p) {
+  app.innerHTML = topbar('Ôn tập', true) +
+    '<div class="done"><h2>Xong buổi ôn tập!</h2>' +
+    '<div class="big">' + s.ok + '/' + s.queue.length + '</div>' +
+    '<p>Bạn đã nhớ được ' + s.ok + ' trên ' + s.queue.length + ' từ.</p>' +
+    '<div class="btnrow"><button class="btn ghost" id="d-home">Trang chủ</button>' +
+    '<button class="btn" id="d-again">Ôn tiếp</button></div></div>';
+  bindChrome(true);
+  document.getElementById('d-home').onclick = () => { while (stack.length > 1) stack.pop(); render(); };
+  document.getElementById('d-again').onclick = () => go('review', { lv: p.lv }, 'Ôn tập');
+}
+
+/* ---------- Trắc nghiệm ---------- */
+function vQuiz(p) { ensureLevel(p.lv, () => drawQuizStart(p)); }
+function drawQuizStart(p) {
+  const lv = p.lv, D = LVDATA[lv];
+  let words = D.words;
+  if (p.unit) words = words.filter(w => w.u === p.unit);
+  if (words.length < 4) {
+    app.innerHTML = topbar('Trắc nghiệm', true) +
+      '<div class="empty"><p>Cần ít nhất 4 từ để chơi. Hãy chọn phạm vi rộng hơn.</p></div>';
+    bindChrome(true); return;
+  }
+  const s = { qs: makeQuiz(words, 10), pos: 0, score: 0, wrong: [], picked: -1 };
+  drawQuiz(s, p);
+}
+function drawQuiz(s, p) {
+  const q = s.qs[s.pos];
+  let h = topbar('Trắc nghiệm · ' + shortName(p.lv), true);
+  h += '<div class="qwrap"><div class="qprog"><i style="width:' +
+    Math.round(s.pos / s.qs.length * 100) + '%"></i></div>';
+  h += '<div class="qcard"><div class="fprog">Câu ' + (s.pos + 1) + ' / ' + s.qs.length + '</div>' +
+    '<div class="qw">' + esc(q.word) + '</div>' +
+    '<div class="qp">' + esc(q.ipa) + ' · ' + esc(q.ph) + '</div>' +
+    '<div style="text-align:center;margin-top:6px"><button class="iconbtn primary" id="q-say" style="margin:0 auto" aria-label="Phát âm">' +
+    icon('speaker') + '</button></div>' +
+    '<div class="ask">Nghĩa của từ này là gì?</div><div class="opts">';
+  q.options.forEach((op, i) => {
+    h += '<button class="opt" data-i="' + i + '">' + esc(op) + '</button>';
+  });
+  h += '</div><div class="qfb" id="qfb"></div>';
+  h += '<div id="qnext" style="margin-top:12px"></div>';
+  h += '</div></div>';
+  app.innerHTML = h;
+  bindChrome(true);
+  document.getElementById('q-say').onclick = () => speak(q.word);
+  app.querySelectorAll('.opt').forEach(b => {
+    b.onclick = () => {
+      if (s.picked !== -1) return;
+      s.picked = +b.dataset.i;
+      const good = q.options[s.picked] === q.answer;
+      app.querySelectorAll('.opt').forEach(x => {
+        x.disabled = true;
+        if (x.textContent === q.answer) x.classList.add('correct');
+      });
+      const fb = document.getElementById('qfb');
+      if (good) { s.score++; fb.textContent = 'Chính xác!'; fb.className = 'qfb good'; }
+      else {
+        b.classList.add('wrong');
+        fb.textContent = 'Chưa đúng. Đáp án: ' + q.answer; fb.className = 'qfb bad';
+        s.wrong.push(q);
+      }
+      touchDay();
+      const nx = document.getElementById('qnext');
+      nx.innerHTML = '<button class="btn blue" id="q-go">' +
+        (s.pos + 1 >= s.qs.length ? 'Xem kết quả' : 'Câu tiếp theo') + '</button>';
+      document.getElementById('q-go').onclick = () => {
+        s.pos++; s.picked = -1;
+        if (s.pos >= s.qs.length) drawQuizDone(s, p);
+        else drawQuiz(s, p);
+      };
+    };
+  });
+}
+function drawQuizDone(s, p) {
+  let h = topbar('Kết quả', true) + '<div class="done"><h2>Kết quả trắc nghiệm</h2>' +
+    '<div class="big">' + s.score + '/' + s.qs.length + '</div>';
+  h += s.score === s.qs.length ? '<p>Hoàn hảo! Bạn nhớ hết rồi.</p>'
+    : s.score >= s.qs.length * 0.7 ? '<p>Làm tốt lắm! Ôn lại vài từ bên dưới nhé.</p>'
+    : '<p>Cố gắng thêm chút nữa. Ôn lại các từ sai bên dưới.</p>';
+  if (s.wrong.length) {
+    h += '<div class="section-t" style="text-align:left">Các từ cần ôn lại</div><div class="wrongs">';
+    s.wrong.forEach(q => {
+      h += '<div class="wi"><b>' + esc(q.word) + '</b> — <span>' + esc(q.answer) + '</span><br>' +
+        '<small>' + esc(q.exVi) + '</small></div>';
+    });
+    h += '</div>';
+  }
+  h += '<div class="btnrow"><button class="btn ghost" id="d-home">Trang chủ</button>' +
+    '<button class="btn" id="d-again">Chơi lại</button></div></div>';
+  app.innerHTML = h;
+  bindChrome(true);
+  document.getElementById('d-home').onclick = () => { while (stack.length > 1) stack.pop(); render(); };
+  document.getElementById('d-again').onclick = () => go('quiz', { lv: p.lv, unit: p.unit || 0 }, 'Trắc nghiệm');
+}
+
+const VIEWS = { home: vHome, level: vLevel, cards: vCards, review: vReview, quiz: vQuiz };
+
+/* ---------- Khởi động ---------- */
+initVoices();
+go('home', {}, 'Kids English Lite');
+
+</script>
+</body>
+</html>
