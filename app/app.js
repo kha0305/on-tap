@@ -25,17 +25,19 @@ document.getElementById("appSub").innerHTML = S.sub;
 document.documentElement.style.setProperty("--accent", S.accent);
 (function buildSubjNav(){
   const nav = document.getElementById("subjNav");
-  let h = '<a class="home" href="../">&larr; Trang chủ</a>';
+  nav.innerHTML = "";
+  const home = document.createElement("button");
+  home.type = "button"; home.className = "subj-pill home"; home.textContent = "← Trang chủ";
+  home.addEventListener("click", () => { location.href = "../"; });
+  nav.appendChild(home);
   MONS.forEach(m => {
-    h += '<a href="#' + m + '" data-tip="' + MON_FULL[m] + '"' + (m === S.id ? ' class="cur"' : '') + '>' + MON_NAMES[m] + '</a>';
-  });
-  nav.innerHTML = h;
-  nav.addEventListener("contextmenu", e => e.preventDefault()); /* chan menu giu-lau tren mobile de tooltip hien */
-  nav.querySelectorAll('a[href^="#"]').forEach(a => {
-    a.addEventListener("click", () => {
-      if (a.getAttribute("href") === "#" + S.id) return;
-      setTimeout(() => location.reload(), 30);
-    });
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "subj-pill" + (m === S.id ? " cur" : "");
+    b.textContent = MON_NAMES[m];
+    b.dataset.tip = MON_FULL[m];
+    if (m !== S.id) b.addEventListener("click", () => { location.hash = m; location.reload(); });
+    nav.appendChild(b);
   });
 })();
 /* Tabs: chi hien tab mon nay co */
@@ -49,9 +51,12 @@ document.documentElement.style.setProperty("--accent", S.accent);
     b.textContent = label + (counts[key] ? " (" + counts[key] + ")" : "");
     bar.appendChild(b);
   });
+  const fbTab = document.createElement("button");
+  fbTab.className = "tab"; fbTab.dataset.tab = "gopy"; fbTab.textContent = "Góp ý";
+  bar.appendChild(fbTab);
   document.querySelectorAll(".panel").forEach(p => {
     const key = p.id.replace("panel-", "");
-    if (!S.tabs.some(t => t[0] === key)) p.style.display = "none";
+    if (key !== "gopy" && !S.tabs.some(t => t[0] === key)) p.style.display = "none";
   });
 })();
 /* Noi dung tinh theo mon */
@@ -71,6 +76,8 @@ document.querySelectorAll(".tab").forEach(t=>{
     t.classList.add("active");
     document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
     $("panel-"+t.dataset.tab).classList.add("active");
+    const fab=document.getElementById("qNavFab");
+    if(fab)fab.style.display=(t.dataset.tab==="gopy")?"none":"";
     window.scrollTo({top:0,behavior:"smooth"});
   });
 });
@@ -284,6 +291,29 @@ function renderTimeline(){
     box.appendChild(d);
   });
 }
+
+/* ---- Gop y: nut tren phai nhay toi tab; form trong tab, gui qua email cua kha ---- */
+(function(){
+  const openBtn = document.getElementById("fbOpenTop");
+  if (openBtn) openBtn.addEventListener("click", () => {
+    const tab = document.querySelector('.tab[data-tab="gopy"]');
+    if (tab) tab.click();
+  });
+  const form = document.getElementById("fbForm");
+  if (!form) return;
+  document.getElementById("fbSubj").value = S.title;
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const name = document.getElementById("fbName").value.trim();
+    const kind = document.getElementById("fbKind").value;
+    const text = document.getElementById("fbBody").value.trim();
+    if (!text) return;
+    const subject = "[Góp ý web ôn tập] " + kind + " — " + S.code;
+    const body = "Môn: " + S.title + "\nLoại: " + kind + "\nTên: " + (name || "(ẩn danh)") + "\n\n" + text;
+    window.location.href = "mailto:baokha0905@gmail.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    document.getElementById("fbNote").textContent = "Đã mở ứng dụng email — Bạn bấm Gửi trong đó là xong. Cảm ơn Bạn đã góp ý!";
+  });
+})();
 
 /* ---- Init ---- */
 loadProgress();buildChapChips();rebuildOrder();renderQuiz();

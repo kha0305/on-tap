@@ -9,13 +9,14 @@
 <body>
 <div class="wrap">
 <header class="top">
-  <div>
-    <h1 id="appTitle">Ôn tập</h1>
-    <p class="sub" id="appSub"></p>
-    <nav class="subjnav" id="subjNav"></nav>
+  <h1 id="appTitle">Ôn tập</h1>
+  <div class="top-actions">
+    <button class="theme-btn" id="fbOpenTop" title="Góp ý / Báo lỗi">Góp ý</button>
+    <button class="theme-btn" id="themeBtn" title="Đổi giao diện sáng/tối">Sáng / Tối</button>
   </div>
-  <button class="theme-btn" id="themeBtn" title="Đổi giao diện sáng/tối">Sáng / Tối</button>
 </header>
+<p class="sub" id="appSub"></p>
+<nav class="subjnav" id="subjNav"></nav>
 
 <nav class="tabs" id="tabBar"></nav>
 
@@ -84,6 +85,30 @@
 
 <!-- ============ Ý CHÍNH ============ -->
 <section class="panel" id="panel-keys"></section>
+<!-- ============ GÓP Ý ============ -->
+<section class="panel" id="panel-gopy">
+  <div class="card">
+    <h3 style="margin-top:0">Góp ý / Báo lỗi</h3>
+    <p class="sub" style="margin:0 0 4px">Thấy đáp án sai, nội dung thiếu hay muốn thêm tính năng gì — Bạn cứ ghi vào đây.</p>
+    <form id="fbForm">
+      <label class="lbl" for="fbName">Tên của Bạn (không bắt buộc)</label>
+      <input type="text" id="fbName" placeholder="Ẩn danh cũng được">
+      <label class="lbl" for="fbKind">Loại góp ý</label>
+      <select id="fbKind">
+        <option>Báo lỗi đáp án</option>
+        <option>Góp ý nội dung</option>
+        <option>Đề xuất tính năng</option>
+        <option>Khác</option>
+      </select>
+      <label class="lbl" for="fbSubj">Môn</label>
+      <input type="text" id="fbSubj" readonly>
+      <label class="lbl" for="fbBody">Nội dung</label>
+      <textarea id="fbBody" rows="5" required placeholder="Bạn thấy sai ở đâu, muốn thêm gì..."></textarea>
+      <div class="toolbar"><button class="btn" type="submit">Gửi góp ý</button></div>
+      <p class="sub" id="fbNote" style="margin:6px 0 0">Gửi bằng ứng dụng email trên máy của Bạn.</p>
+    </form>
+  </div>
+</section>
 </div>
 
 <button id="toTop" title="Lên đầu trang" aria-label="Lên đầu trang">↑</button>

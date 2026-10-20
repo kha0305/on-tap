@@ -132,17 +132,36 @@ footer.note{margin-top:26px;color:var(--muted);font-size:.85rem;border-top:1px s
 /* ---- nav chuyen mon ---- */
 .subjnav a.cur{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-/* ---- tooltip mo ta mon (hover / cham / giu lau) ---- */
-.subjnav a{position:relative;-webkit-touch-callout:none;user-select:none}
-.subjnav a[data-tip]::after{
+/* ---- tooltip mo ta mon (hover / cham / giu lau): canh giua theo hang nut, khong tran man hinh ---- */
+.subjnav{position:relative}
+.subjnav .subj-pill{-webkit-touch-callout:none;user-select:none}
+.subjnav .subj-pill[data-tip]::after{
   content:attr(data-tip);
   position:absolute;left:50%;top:calc(100% + 7px);transform:translateX(-50%) translateY(4px);
   background:var(--ink);color:var(--bg);
-  font-size:.78rem;font-weight:400;line-height:1.4;white-space:nowrap;
+  font-size:.78rem;font-weight:400;line-height:1.4;
+  white-space:normal;text-align:center;max-width:min(280px,82vw);
   padding:6px 12px;border-radius:8px;box-shadow:var(--shadow);
   opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;z-index:60;
 }
-.subjnav a[data-tip]:nth-child(2)::after{left:0;transform:translateY(4px)}
-.subjnav a[data-tip]:last-child::after{left:auto;right:0;transform:translateY(4px)}
-.subjnav a[data-tip]:hover::after,.subjnav a[data-tip]:focus-visible::after,.subjnav a[data-tip]:active::after{opacity:1;transform:translateX(-50%) translateY(0)}
-.subjnav a[data-tip]:nth-child(2):hover::after,.subjnav a[data-tip]:nth-child(2):focus-visible::after,.subjnav a[data-tip]:nth-child(2):active::after,.subjnav a[data-tip]:last-child:hover::after,.subjnav a[data-tip]:last-child:focus-visible::after,.subjnav a[data-tip]:last-child:active::after{transform:translateY(0)}
+.subjnav .subj-pill[data-tip]:hover::after,
+.subjnav .subj-pill[data-tip]:focus-visible::after,
+.subjnav .subj-pill[data-tip]:active::after{opacity:1;transform:translateX(-50%) translateY(0)}
+/* ---- nut chuyen mon (button, khong phai link) + cum nut tren phai ---- */
+.subjnav .subj-pill{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:6px 13px;font-size:.83rem;cursor:pointer;font-family:inherit;transition:border-color .15s,color .15s}
+.subjnav .subj-pill:hover{border-color:var(--accent);color:var(--accent)}
+.subjnav .subj-pill.home{color:var(--accent);border-color:var(--accent);font-weight:600}
+.subjnav .subj-pill.cur{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ---- cum nut goc phai (Gop y + Sang/Toi) ---- */
+.top-actions{display:flex;gap:8px;align-items:flex-start}
+
+/* ---- toi uu mobile: header khong tran ngang ---- */
+html,body{overflow-x:clip}
+header.top h1{flex:1;min-width:0}
+.top-actions{flex:0 0 auto}
+.q-text,.opt{overflow-wrap:break-word}
+@media(max-width:640px){
+  .top-actions{gap:6px}
+  .top-actions .theme-btn{padding:6px 10px;font-size:.78rem}
+}
