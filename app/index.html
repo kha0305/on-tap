@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ôn tập</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div>
+    <h1 id="appTitle">Ôn tập</h1>
+    <p class="sub" id="appSub"></p>
+    <nav class="subjnav" id="subjNav"></nav>
+  </div>
+  <button class="theme-btn" id="themeBtn" title="Đổi giao diện sáng/tối">Sáng / Tối</button>
+</header>
+
+<nav class="tabs" id="tabBar"></nav>
+
+<!-- ============ QUIZ ============ -->
+<section class="panel active" id="panel-quiz">
+  <div class="chips" id="chapChips"></div>
+  <div class="toolbar">
+    <button class="btn ghost" id="shuffleBtn">Xáo trộn</button>
+    <button class="btn ghost" id="wrongBtn">Chỉ ôn câu sai (<span id="wrongCount">0</span>)</button>
+    <button class="btn ghost" id="resetBtn">Làm lại</button><button class="btn" id="examBtn">Thi thử</button>
+    <span class="score" id="scoreLine">Đã làm <b>0</b>/0 &middot; Đúng <b>0</b></span>
+  </div>
+  <p class="sub">Nhắc nhỏ: đáp án được tra cứu và đối chiếu từ nhiều nguồn trên mạng, dù đã rà soát kỹ vẫn có thể còn sai sót. Khi ôn thi, bạn nên đối chiếu thêm với giáo trình và đáp án của giảng viên.</p>
+  <div id="quizList"></div>
+<div id="examRoot" style="display:none">
+  <div class="card" id="exSetup">
+    <h3 class="exh">Thi thử trắc nghiệm</h3>
+    <p class="sub" style="margin:0 0 4px">Mặc định: 30 câu / 30 phút. Bạn chỉnh lại tùy ý.</p>
+    <label class="lbl" for="exNum">Số câu hỏi (tối đa <span id="exMax">0</span>)</label>
+    <input type="number" id="exNum" min="1" value="30">
+    <label class="lbl" for="exMin">Thời gian (phút)</label>
+    <input type="number" id="exMin" min="1" value="30">
+    <div class="toolbar">
+      <button class="btn" id="exStart">Bắt đầu thi</button>
+      <button class="btn ghost" id="exCancel">Đóng</button>
+    </div>
+    <div class="exhist" id="exHist"></div>
+  </div>
+  <div id="exRun" style="display:none">
+    <div class="extop"><span class="extimer" id="exTimer">30:00</span><button class="btn" id="exSubmit">Nộp bài</button></div>
+    <div class="exgrid" id="exGrid"></div>
+    <div class="card" id="exQ"></div>
+    <div class="toolbar">
+      <button class="btn ghost" id="exPrev">&larr; Câu trước</button>
+      <button class="btn ghost" id="exNext">Câu tiếp &rarr;</button>
+      <button class="btn ghost" id="exQuit">Thoát</button>
+    </div>
+  </div>
+  <div id="exResult" style="display:none"></div>
+</div>
+
+</section>
+
+<!-- ============ CÂU HỎI NGẮN ============ -->
+<section class="panel" id="panel-flash">
+  <div class="toolbar">
+    <button class="btn ghost" id="fcShuffle">Xáo trộn thứ tự</button>
+    <span class="score">Đáp án hiện ngay bên dưới mỗi câu hỏi</span>
+  </div>
+  <div id="flashList"></div>
+</section>
+
+<!-- ============ TỰ LUẬN / BÀI THỰC HÀNH ============ -->
+<section class="panel" id="panel-essay">
+  <p class="sub"></p>
+  <div id="essayList"></div>
+</section>
+
+<!-- ============ TIMELINE ============ -->
+<section class="panel" id="panel-timeline">
+  <div class="card">
+    <h3 style="margin-top:0">Dòng thời gian 1925 – 2016</h3>
+    <div class="tl" id="tlList"></div>
+  </div>
+</section>
+
+<!-- ============ Ý CHÍNH ============ -->
+<section class="panel" id="panel-keys"></section>
+</div>
+
+<button id="toTop" title="Lên đầu trang" aria-label="Lên đầu trang">↑</button>
+<button id="qNavFab" title="Mục lục câu hỏi" aria-label="Mục lục câu hỏi">☰</button>
+<div id="qNavOverlay"><div id="qNavPopup" role="dialog" aria-label="Mục lục câu hỏi"><div class="qnav-head"><b id="qNavTitle">Mục lục</b><button id="qNavClose" aria-label="Đóng">✕</button></div><div id="qNav"></div></div></div>
+<script>
+/* Chon mon theo hash: #his362, #pos361, #pos351, #cs434, #cs420 */
+(function(){
+  var MONS=["his362","pos361","pos351","cs434","cs420"];
+  var m=(location.hash||"").replace("#","");
+  if(MONS.indexOf(m)<0)m="his362";
+  window.APP_MON=m;
+  document.write('<script src="../data/'+m+'.js"><\/script>');
+})();
+</script>
+<script src="app.js"></script>
+<script src="exam.js"></script>
+</body>
+</html>
