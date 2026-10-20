@@ -101,12 +101,13 @@
         <option>Khác</option>
       </select>
       <label class="lbl" for="fbSubj">Môn</label>
-      <input type="text" id="fbSubj" readonly>
+      <select id="fbSubj"></select>
       <label class="lbl" for="fbBody">Nội dung</label>
       <textarea id="fbBody" rows="5" required placeholder="Bạn thấy sai ở đâu, muốn thêm gì..."></textarea>
       <label class="lbl" for="fbImg">Ảnh đính kèm (không bắt buộc)</label>
       <input type="file" id="fbImg" accept="image/*">
       <img id="fbImgPrev" alt="Ảnh đính kèm">
+      <p class="fb-img-note" id="fbImgNote"></p>
       <div class="toolbar"><button class="btn" type="submit">Gửi góp ý</button></div>
       <p class="sub" id="fbNote" style="margin:6px 0 0">Gửi bằng ứng dụng email trên máy của Bạn.</p>
     </form>
@@ -121,9 +122,12 @@
 /* Chon mon theo hash: #his362, #pos361, #pos351, #cs434, #cs420 */
 (function(){
   var MONS=["his362","pos361","pos351","cs434","cs420"];
-  var m=(location.hash||"").replace("#","");
+  var h=(location.hash||"").replace("#","").split("?");
+  var m=h[0];
   if(MONS.indexOf(m)<0)m="his362";
   window.APP_MON=m;
+  window.APP_PARAMS={};
+  if(h[1])h[1].split("&").forEach(function(kv){var p=kv.split("=");window.APP_PARAMS[p[0]]=decodeURIComponent(p[1]||"");});
   document.write('<script src="../data/'+m+'.js"><\/script>');
 })();
 </script>

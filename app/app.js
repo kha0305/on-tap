@@ -301,13 +301,29 @@ function renderTimeline(){
   });
   const form = document.getElementById("fbForm");
   if (!form) return;
-  document.getElementById("fbSubj").value = S.title;
+  const monSel = document.getElementById("fbSubj");
+  monSel.innerHTML = '<option value="all">Tất cả các môn</option>' + MONS.map(m =>
+    '<option value="' + m + '">' + MON_NAMES[m] + " — " + MON_FULL[m] + '</option>').join("");
+  const params = window.APP_PARAMS || {};
+  monSel.value = params.mon === "all" ? "all" : window.APP_MON;
+  if (params.tab === "gopy") {
+    setTimeout(() => { const t = document.querySelector('.tab[data-tab="gopy"]'); if (t) t.click(); }, 0);
+  }
   const imgInput = document.getElementById("fbImg");
   const imgPrev = document.getElementById("fbImgPrev");
+  const imgNote = document.getElementById("fbImgNote");
+  let fbFile = null;
   imgInput.addEventListener("change", () => {
-    const f = imgInput.files && imgInput.files[0];
-    if (f) { imgPrev.src = URL.createObjectURL(f); imgPrev.style.display = "block"; }
-    else { imgPrev.removeAttribute("src"); imgPrev.style.display = "none"; }
+    fbFile = (imgInput.files && imgInput.files[0]) || null;
+    if (fbFile) {
+      try { imgPrev.src = URL.createObjectURL(fbFile); imgPrev.style.display = "block"; }
+      catch (err) { imgPrev.style.display = "none"; }
+      imgNote.textContent = "Đã chọn ảnh: " + fbFile.name + " — ảnh sẽ đi kèm góp ý khi bấm Gửi.";
+      imgNote.style.display = "block";
+    } else {
+      imgPrev.removeAttribute("src"); imgPrev.style.display = "none";
+      imgNote.style.display = "none";
+    }
   });
   form.addEventListener("submit", e => {
     e.preventDefault();
@@ -315,10 +331,13 @@ function renderTimeline(){
     const kind = document.getElementById("fbKind").value;
     const text = document.getElementById("fbBody").value.trim();
     if (!text) return;
-    const subject = "[Góp ý web ôn tập] " + kind + " — " + S.code;
-    const body = "Môn: " + S.title + "\nLoại: " + kind + "\nTên: " + (name || "(ẩn danh)") + "\n\n" + text;
+    const monVal = monSel.value;
+    const monLabel = monVal === "all" ? "Tất cả các môn" : (MON_NAMES[monVal] + " — " + MON_FULL[monVal]);
+    const subject = "[Góp ý web ôn tập] " + kind + " — " + (monVal === "all" ? "TẤT CẢ" : MON_NAMES[monVal]);
+    const body = "Môn: " + monLabel + "\nLoại: " + kind + "\nTên: " + (name || "(ẩn danh)") + "\n\n" + text;
     const note = document.getElementById("fbNote");
-    const files = (imgInput.files && imgInput.files.length) ? [imgInput.files[0]] : [];
+    const picked = fbFile || (imgInput.files && imgInput.files[0]);
+    const files = picked ? [picked] : [];
     if (files.length && window.navigator && navigator.canShare && navigator.canShare({ files })) {
       navigator.share({ title: subject, text: body, files }).then(() => {
         note.textContent = "Đã chia sẻ góp ý kèm ảnh. Cảm ơn Bạn!";
